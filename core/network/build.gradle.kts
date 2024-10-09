@@ -16,8 +16,9 @@ dependencies {
     implementation(libs.mockk)
     implementation(libs.retrofit.gson)
     implementation(projects.core.datastore)
-    implementation(projects.core.util)
+    implementation(projects.core.locale)
+    implementation(libs.stubs.util)
     implementation(projects.model.configuration)
     implementation(projects.model.datastore)
-    implementation(projects.model.tmdb)
+    implementation(libs.stubs.model.film)
 }

@@ -20,12 +20,10 @@ import com.flixclusive.core.ui.mobile.component.RetryButton
 import com.flixclusive.core.ui.mobile.component.SMALL_ERROR
 import com.flixclusive.core.ui.mobile.component.film.FilmCard
 import com.flixclusive.core.ui.mobile.component.film.FilmCardPlaceholder
-import com.flixclusive.core.util.common.ui.isError
-import com.flixclusive.core.util.common.ui.isLoading
 import com.flixclusive.feature.mobile.searchExpanded.SearchExpandedScreenViewModel
 import com.flixclusive.model.datastore.AppSettings
-import com.flixclusive.model.tmdb.Film
-import com.flixclusive.core.util.R as UtilR
+import com.flixclusive.model.film.Film
+import com.flixclusive.core.locale.R as LocaleR
 
 @Composable
 internal fun SearchFilmsGridView(
@@ -78,7 +76,7 @@ internal fun SearchFilmsGridView(
                     .fillMaxWidth(),
                 shouldShowError = viewModel.pagingState.isError,
                 error = viewModel.error?.asString()
-                    ?: stringResource(UtilR.string.error_on_search),
+                    ?: stringResource(LocaleR.string.error_on_search),
                 onRetry = viewModel::paginateItems
             )
         }

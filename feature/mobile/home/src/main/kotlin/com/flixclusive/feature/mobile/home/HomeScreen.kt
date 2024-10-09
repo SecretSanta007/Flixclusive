@@ -28,29 +28,21 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.flixclusive.core.ui.common.navigation.CommonScreenNavigator
+import com.flixclusive.core.ui.common.navigation.navigator.HomeNavigator
 import com.flixclusive.core.ui.common.util.placeholderEffect
 import com.flixclusive.core.ui.home.HomeScreenViewModel
 import com.flixclusive.core.ui.mobile.component.RetryButton
 import com.flixclusive.core.ui.mobile.component.film.FilmCardPlaceholder
 import com.flixclusive.core.util.exception.safeCall
-import com.flixclusive.model.tmdb.Film
-import com.flixclusive.model.tmdb.Genre
-import com.flixclusive.model.tmdb.category.Category
-import com.flixclusive.model.tmdb.common.tv.Episode
+import com.flixclusive.model.film.Film
+import com.flixclusive.model.film.common.tv.Episode
 import com.ramcosta.composedestinations.annotation.Destination
 import kotlinx.coroutines.launch
-import com.flixclusive.core.util.R as UtilR
-
-
-interface HomeNavigator : CommonScreenNavigator {
-    fun openGenreScreen(genre: Genre)
-    fun openSeeAllScreen(item: Category)
-}
+import com.flixclusive.core.locale.R as LocaleR
 
 @Destination
 @Composable
-fun HomeScreen(
+internal fun HomeScreen(
     navigator: HomeNavigator,
     previewFilm: (Film) -> Unit,
     play: (Film, Episode?) -> Unit,
@@ -63,7 +55,7 @@ fun HomeScreen(
     val uiState by viewModel.state.collectAsStateWithLifecycle()
 
     val headerItem = uiState.headerItem
-    val homeCategories = uiState.categories
+    val homeCategories = uiState.catalogs
     val homeRowItemsPagingState = uiState.rowItemsPagingState
     val homeRowItems = uiState.rowItems
     val watchHistoryItems by viewModel.continueWatchingList.collectAsStateWithLifecycle()
@@ -90,7 +82,7 @@ fun HomeScreen(
         RetryButton(
             modifier = Modifier.fillMaxSize(),
             shouldShowError = uiState.status.error != null,
-            error = uiState.status.error?.asString() ?: stringResource(UtilR.string.error_on_initialization),
+            error = uiState.status.error?.asString() ?: stringResource(LocaleR.string.error_on_initialization),
             onRetry = viewModel::initialize
         )
 
@@ -128,7 +120,7 @@ fun HomeScreen(
                     key = { _, item -> item.name }
                 ) { i, item ->
                     HomeFilmsRow(
-                        categoryItem = item,
+                        catalogItem = item,
                         paginationState = homeRowItemsPagingState[i],
                         films = homeRowItems[i],
                         onFilmClick = navigator::openFilmScreen,
@@ -136,7 +128,7 @@ fun HomeScreen(
                         onFilmLongClick = previewFilm,
                         paginate = {
                             viewModel.onPaginateFilms(
-                                category = item,
+                                catalog = item,
                                 index = i,
                                 page = it
                             )

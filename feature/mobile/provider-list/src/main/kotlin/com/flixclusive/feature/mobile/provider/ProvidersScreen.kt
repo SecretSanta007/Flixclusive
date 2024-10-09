@@ -56,9 +56,7 @@ import com.flixclusive.core.theme.FlixclusiveTheme
 import com.flixclusive.core.ui.common.R
 import com.flixclusive.core.ui.common.dialog.IconAlertDialog
 import com.flixclusive.core.ui.common.dialog.TextAlertDialog
-import com.flixclusive.core.ui.common.navigation.GoBackAction
-import com.flixclusive.core.ui.common.navigation.MarkdownNavigator
-import com.flixclusive.core.ui.common.navigation.ProviderTestNavigator
+import com.flixclusive.core.ui.common.navigation.navigator.ProvidersScreenNavigator
 import com.flixclusive.core.ui.common.util.onMediumEmphasis
 import com.flixclusive.core.ui.common.util.showToast
 import com.flixclusive.core.ui.mobile.component.EmptyDataMessage
@@ -71,28 +69,21 @@ import com.flixclusive.feature.mobile.provider.component.ProfileHandlerButtons
 import com.flixclusive.feature.mobile.provider.component.ProvidersTopBar
 import com.flixclusive.feature.mobile.provider.util.DragAndDropUtils.dragGestureHandler
 import com.flixclusive.feature.mobile.provider.util.rememberDragDropListState
-import com.flixclusive.gradle.entities.ProviderData
-import com.flixclusive.gradle.entities.Status
+import com.flixclusive.model.provider.Status
 import com.ramcosta.composedestinations.annotation.Destination
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import com.flixclusive.core.locale.R as LocaleR
 import com.flixclusive.core.ui.common.R as UiCommonR
-import com.flixclusive.core.util.R as UtilR
-
-interface ProvidersScreenNavigator : GoBackAction, ProviderTestNavigator, MarkdownNavigator {
-    fun openProviderSettings(providerData: ProviderData)
-    fun openProviderInfo(providerData: ProviderData)
-    fun openAddRepositoryScreen()
-}
 
 private val FabButtonSize = 56.dp
 private fun Context.getHelpGuideTexts()
-    = resources.getStringArray(UtilR.array.providers_screen_help)
+    = resources.getStringArray(LocaleR.array.providers_screen_help)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Destination
 @Composable
-fun ProvidersScreen(
+internal fun ProvidersScreen(
     navigator: ProvidersScreenNavigator
 ) {
     val context = LocalContext.current
@@ -130,7 +121,7 @@ fun ProvidersScreen(
     }
 
     val featureComingSoonCallback = {
-        context.showToast(context.getString(UtilR.string.coming_soon_feature))
+        context.showToast(context.getString(LocaleR.string.coming_soon_feature))
     }
 
     val onNeedHelp = {
@@ -161,12 +152,12 @@ fun ProvidersScreen(
                     shape = MaterialTheme.shapes.medium,
                     expanded = !shouldShowTopBar,
                     text = {
-                        Text(text = stringResource(UtilR.string.add_provider))
+                        Text(text = stringResource(LocaleR.string.add_provider))
                     },
                     icon = {
                         Icon(
                             painter = painterResource(id = UiCommonR.drawable.round_add_24),
-                            contentDescription = stringResource(UtilR.string.add_provider)
+                            contentDescription = stringResource(LocaleR.string.add_provider)
                         )
                     }
                 )
@@ -196,7 +187,7 @@ fun ProvidersScreen(
                 if (state) {
                     EmptyDataMessage(
                         modifier = Modifier.fillMaxSize(),
-                        description = stringResource(UtilR.string.empty_providers_list_message),
+                        description = stringResource(LocaleR.string.empty_providers_list_message),
                     ) {
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
@@ -209,7 +200,7 @@ fun ProvidersScreen(
                                 onClick = navigator::openAddRepositoryScreen,
                                 modifier = Modifier
                             ) {
-                                Text(text = stringResource(UtilR.string.add_provider))
+                                Text(text = stringResource(LocaleR.string.add_provider))
                             }
                         }
                     }
@@ -252,7 +243,7 @@ fun ProvidersScreen(
                                             )
                                         },
                                         iconId = UiCommonR.drawable.test,
-                                        label = stringResource(id = UtilR.string.test_providers),
+                                        label = stringResource(id = LocaleR.string.test_providers),
                                         modifier = Modifier
                                             .fillMaxWidth()
                                             .padding(bottom = 3.dp)
@@ -266,7 +257,10 @@ fun ProvidersScreen(
                             }
                         }
 
-                        itemsIndexed(items = filteredProviders ?: viewModel.providerDataList) { index, providerData ->
+                        itemsIndexed(
+                            items = filteredProviders ?: viewModel.providerDataList,
+                            key = { _, item -> item.id }
+                        ) { index, providerData ->
                             val displacementOffset =
                                 // +1 since there's a header
                                 if (index + 1 == dragDropListState.getCurrentIndexOfDraggedListItem()) {
@@ -278,6 +272,7 @@ fun ProvidersScreen(
                                 && (providerSettings.getOrNull(index)?.isDisabled?.not() ?: true)
 
                             InstalledProviderCard(
+                                modifier = Modifier.animateItem(),
                                 providerData = providerData,
                                 enabled = isEnabled,
                                 isDraggable = !searchExpanded.value,
@@ -299,9 +294,9 @@ fun ProvidersScreen(
 
         IconAlertDialog(
             painter = painterResource(id = R.drawable.warning),
-            contentDescription = stringResource(id = UtilR.string.warning_content_description),
+            contentDescription = stringResource(id = LocaleR.string.warning_content_description),
             description = buildAnnotatedString {
-                append(context.getString(UtilR.string.warning_uninstall_message_first_half))
+                append(context.getString(LocaleR.string.warning_uninstall_message_first_half))
                 append(" ")
                 withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
                     append(providerData.name)
@@ -318,9 +313,9 @@ fun ProvidersScreen(
 
     if (isFirstTimeOnProvidersScreen) {
         TextAlertDialog(
-            label = stringResource(UtilR.string.first_time_providers_screen_title),
-            description = stringResource(UtilR.string.first_time_providers_screen_message),
-            dismissButtonLabel = stringResource(id = UtilR.string.skip),
+            label = stringResource(LocaleR.string.first_time_providers_screen_title),
+            description = stringResource(LocaleR.string.first_time_providers_screen_message),
+            dismissButtonLabel = stringResource(id = LocaleR.string.skip),
             dismissOnConfirm = false,
             onConfirm = {
                 scope.launch {
@@ -354,7 +349,7 @@ private fun MissingProvidersLogo() {
         ) {
             Icon(
                 painter = painterResource(id = UiCommonR.drawable.provider_logo),
-                contentDescription = stringResource(id = UtilR.string.missing_providers_logo_content_description),
+                contentDescription = stringResource(id = LocaleR.string.missing_providers_logo_content_description),
                 modifier = Modifier.size(70.dp)
             )
 

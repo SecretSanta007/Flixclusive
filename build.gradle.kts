@@ -5,6 +5,7 @@ buildscript {
         google()
         mavenCentral()
         maven { url = uri("https://jitpack.io") }
+        mavenLocal()
     }
 }
 
@@ -51,14 +52,14 @@ tasks.register<Jar>("generateStubsJar") {
     subprojects.forEach { project ->
         if (project.subprojects.size == 0) {
             val projectPath = "." + project.path.replace(":", "/")
-            val classesJar = File("${projectPath}/build/intermediates/compile_app_classes_jar/release/classes.jar")
+            val classesJar =
+                File("${projectPath}/build/intermediates/compile_app_classes_jar/release/classes.jar")
 
             if (classesJar.exists()) {
                 from(zipTree(classesJar)) {
                     duplicatesStrategy = DuplicatesStrategy.INCLUDE
                 }
-            }
-            else {
+            } else {
                 from({
                     project.configurations.getByName("archives")
                         .allArtifacts.files
@@ -74,4 +75,3 @@ tasks.register<Jar>("generateStubsJar") {
         }
     }
 }
-

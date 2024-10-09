@@ -40,12 +40,11 @@ import com.flixclusive.core.ui.tv.component.SourceDataDialog
 import com.flixclusive.core.ui.tv.util.LocalDirectionalFocusRequesterProvider
 import com.flixclusive.core.ui.tv.util.handleDPadKeyEvents
 import com.flixclusive.core.util.android.getActivity
-import com.flixclusive.core.util.film.FilmType
 import com.flixclusive.feature.tv.player.controls.PlaybackControls
-import com.flixclusive.model.provider.MediaLinkResourceState
-import com.flixclusive.model.tmdb.Film
-import com.flixclusive.model.tmdb.TvShow
-import com.flixclusive.model.tmdb.common.tv.Episode
+import com.flixclusive.model.film.Film
+import com.flixclusive.model.film.TvShow
+import com.flixclusive.model.film.common.tv.Episode
+import com.flixclusive.model.film.util.FilmType
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -61,7 +60,7 @@ private fun isSameEpisode(
         && episodeToPlay != null
         && currentEpisode.id == episodeToPlay.id
 
-
+// TODO: Hide this module publicly :feature:tv:player
 @OptIn(ExperimentalTvMaterial3Api::class)
 @Composable
 fun PlayerScreen(
@@ -96,7 +95,7 @@ fun PlayerScreen(
 
     LaunchedEffect(episodeToPlay, isPlayerRunning, isIdle) {
         if (
-            dialogState is MediaLinkResourceState.Success
+            dialogState.isSuccess
             && (
                 isSameEpisode(
                     film = film,
@@ -122,12 +121,12 @@ fun PlayerScreen(
                 episodeToWatch = episodeToPlay
             )
         } else {
-            viewModel.loadSourceData()
+            viewModel.loadMediaLinks()
         }
     }
 
     LaunchedEffect(dialogState, isIdle, isPlayerRunning) {
-        if (!isPlayerRunning && dialogState is MediaLinkResourceState.Success && isIdle && !hasLaunchedFromIdle) {
+        if (!isPlayerRunning && dialogState.isSuccess && isIdle && !hasLaunchedFromIdle) {
             scrapingJob?.cancel()
             scrapingJob = null
 
@@ -140,9 +139,9 @@ fun PlayerScreen(
         }
     }
 
-    if(
-        dialogState !is MediaLinkResourceState.Success
-        && dialogState !is MediaLinkResourceState.Idle
+    if (
+        !dialogState.isSuccess
+        && !dialogState.isIdle
         && isPlayerRunning
     ) {
         Box(
@@ -165,7 +164,7 @@ fun PlayerScreen(
     }
 
     AnimatedVisibility(
-        visible = dialogState is MediaLinkResourceState.Success && isPlayerRunning,
+        visible = dialogState.isSuccess && isPlayerRunning,
         enter = fadeIn(animationSpec = tween(delayMillis = PLAYER_SCREEN_DELAY)),
         exit = fadeOut(animationSpec = tween(delayMillis = PLAYER_SCREEN_DELAY))
     ) {
@@ -227,7 +226,7 @@ fun PlayerScreen(
             player.playWhenReady = playWhenReady
 
             scope.launch {
-                delay(300) // Delay hack pfftt :3
+                delay(300) // Delay hack :3
                 showControls(false)
                 onBack(false)
             }
@@ -255,7 +254,7 @@ fun PlayerScreen(
          * Don't show it if its locked and its buffering.
          * Show controls when buffering
          *
-         * See local function (CTRL+F): [showControls]
+         * See local function (CTRL+F): showControls
          *
          * */
         LaunchedEffect(

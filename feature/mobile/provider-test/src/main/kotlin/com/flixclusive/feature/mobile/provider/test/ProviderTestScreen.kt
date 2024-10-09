@@ -52,6 +52,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.flixclusive.core.theme.FlixclusiveTheme
 import com.flixclusive.core.ui.common.navigation.GoBackAction
+import com.flixclusive.core.ui.common.navigation.navargs.ProviderTestScreenNavArgs
 import com.flixclusive.core.ui.common.util.DummyDataForPreview.getDummyProviderData
 import com.flixclusive.core.ui.common.util.buildImageUrl
 import com.flixclusive.core.ui.common.util.onMediumEmphasis
@@ -65,14 +66,9 @@ import com.flixclusive.feature.mobile.provider.test.component.RepetitiveTestNoti
 import com.flixclusive.feature.mobile.provider.test.component.SortBottomSheet
 import com.flixclusive.feature.mobile.provider.test.component.TestResultCard
 import com.flixclusive.feature.mobile.provider.test.component.TestScreenHeader
-import com.flixclusive.gradle.entities.ProviderData
-import com.flixclusive.model.provider.id
+import com.flixclusive.model.provider.ProviderData
 import com.ramcosta.composedestinations.annotation.Destination
-import com.flixclusive.core.util.R as UtilR
-
-data class ProviderTestScreenNavArgs(
-    val providers: ArrayList<ProviderData>
-)
+import com.flixclusive.core.locale.R as LocaleR
 
 @Composable
 private fun Modifier.drawScrimOnForeground(
@@ -95,7 +91,7 @@ private fun Modifier.drawScrimOnForeground(
     navArgsDelegate = ProviderTestScreenNavArgs::class
 )
 @Composable
-fun ProviderTestScreen(
+internal fun ProviderTestScreen(
     navigator: GoBackAction,
     args: ProviderTestScreenNavArgs
 ) {
@@ -142,7 +138,7 @@ fun ProviderTestScreen(
                     }
 
             snackbarHostState.showSnackbar(
-                message = context.getString(UtilR.string.test_providers_completed, "$totalTestsPassed/$totalTestsPerformed"),
+                message = context.getString(LocaleR.string.test_providers_completed, "$totalTestsPassed/$totalTestsPerformed"),
                 duration = SnackbarDuration.Indefinite,
                 withDismissAction = true
             )
@@ -228,7 +224,7 @@ fun ProviderTestScreen(
                                 .padding(top = 10.dp)
                         ) {
                             Text(
-                                text = stringResource(id = UtilR.string.clear_tests),
+                                text = stringResource(id = LocaleR.string.clear_tests),
                                 style = LocalTextStyle.current.copy(
                                     color = MaterialTheme.colorScheme.onSurface.onMediumEmphasis()
                                 )
@@ -247,7 +243,7 @@ fun ProviderTestScreen(
                     testResult = data,
                     onToggle = { viewModel.toggleCard(id = data.provider.id) },
                     showFullLog = { testCaseOutputToShow = data.provider to it },
-                    modifier = Modifier.animateItemPlacement()
+                    modifier = Modifier.animateItem()
                 )
             }
         }

@@ -1,12 +1,12 @@
 package com.flixclusive.data.tmdb
 
-import com.flixclusive.core.util.common.resource.Resource
+import com.flixclusive.core.network.util.Resource
 import com.flixclusive.core.util.log.LogRule
 import com.flixclusive.core.util.log.debugLog
 import com.flixclusive.data.configuration.AppConfigurationManager
 import com.flixclusive.data.configuration.di.test.TestAppConfigurationModule.getMockAppConfigurationManager
 import com.flixclusive.data.tmdb.di.TestTmdbDataModule.getMockTMDBRepository
-import com.flixclusive.model.tmdb.FilmDetails
+import com.flixclusive.model.film.FilmDetails
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -35,11 +35,11 @@ class TMDBRepositoryTest {
 
     @Test
     fun `fetch all films from categories`() = testScope.runTest {
-        val homeCategories = appConfigurationManager.homeCategoriesData?.run {
+        val homeCategories = appConfigurationManager.homeCatalogsData?.run {
             movie + tv + all
         }
 
-        val searchCategories = appConfigurationManager.searchCategoriesData?.run {
+        val searchCategories = appConfigurationManager.searchCatalogsData?.run {
             type + genres + companies + networks
         }
 
@@ -104,5 +104,15 @@ class TMDBRepositoryTest {
         val tvShowId = 94605 // Arcane
         val response = tmdbRepository.getTvShow(id = tvShowId)
         response.verifyFilmDetails()
+    }
+
+    @Test
+    fun `Get Watch Providers of Arcane TV Show` () = testScope.runTest {
+        val tvShowId = 94605 // Arcane
+        val response = tmdbRepository.getWatchProviders(mediaType = "tv", id = tvShowId)
+
+        assert(response is Resource.Success)
+        assert(response.data?.isNotEmpty() == true)
+        debugLog("☑\uFE0F ${response.data}")
     }
 }

@@ -7,24 +7,24 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.flixclusive.core.datastore.AppSettingsManager
+import com.flixclusive.core.locale.UiText
+import com.flixclusive.core.network.util.Resource
+import com.flixclusive.core.ui.common.provider.MediaLinkResourceState
 import com.flixclusive.core.ui.player.util.PlayerCacheManager
-import com.flixclusive.core.util.common.resource.Resource
-import com.flixclusive.core.util.common.ui.UiText
-import com.flixclusive.core.util.film.FilmType
 import com.flixclusive.data.watch_history.WatchHistoryRepository
 import com.flixclusive.domain.database.WatchTimeUpdaterUseCase
+import com.flixclusive.domain.provider.CachedLinks
 import com.flixclusive.domain.provider.GetMediaLinksUseCase
 import com.flixclusive.domain.tmdb.SeasonProviderUseCase
 import com.flixclusive.model.database.WatchHistoryItem
 import com.flixclusive.model.database.toWatchHistoryItem
 import com.flixclusive.model.database.util.getSavedTimeForFilm
 import com.flixclusive.model.datastore.player.PlayerQuality.Companion.getIndexOfPreferredQuality
-import com.flixclusive.model.provider.CachedLinks
-import com.flixclusive.model.provider.MediaLinkResourceState
-import com.flixclusive.model.tmdb.FilmDetails
-import com.flixclusive.model.tmdb.TvShow
-import com.flixclusive.model.tmdb.common.tv.Episode
-import com.flixclusive.model.tmdb.common.tv.Season
+import com.flixclusive.model.film.FilmDetails
+import com.flixclusive.model.film.TvShow
+import com.flixclusive.model.film.common.tv.Episode
+import com.flixclusive.model.film.common.tv.Season
+import com.flixclusive.model.film.util.FilmType
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -38,7 +38,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import okhttp3.OkHttpClient
 import kotlin.math.max
-import com.flixclusive.core.util.R as UtilR
+import com.flixclusive.core.locale.R as LocaleR
 
 abstract class BasePlayerViewModel(
     args: PlayerScreenNavArgs,
@@ -238,15 +238,14 @@ abstract class BasePlayerViewModel(
                     showErrorSnackbar(it)
                 }
             ).collect { state ->
-                when (state) {
-                    MediaLinkResourceState.Idle,
-                    is MediaLinkResourceState.Error,
-                    is MediaLinkResourceState.Unavailable,
-                    MediaLinkResourceState.Success -> _uiState.update {
+                when {
+                    state.isIdle ||
+                    state.isError ||
+                    state.isSuccess ||
+                    state.isSuccessWithTrustedProviders -> _uiState.update {
                         it.copy(selectedProviderState = PlayerProviderState.SELECTED)
                     }
-
-                    is MediaLinkResourceState.Extracting, is MediaLinkResourceState.Fetching -> _uiState.update {
+                    state.isLoading -> _uiState.update {
                         it.copy(selectedProviderState = PlayerProviderState.LOADING)
                     }
                 }
@@ -384,7 +383,7 @@ abstract class BasePlayerViewModel(
         if(nextEpisode == null && !isThereANextSeason) {
             onError?.invoke(
                 UiText.StringResource(
-                    UtilR.string.episode_non_existent_error_message_format,
+                    LocaleR.string.episode_non_existent_error_message_format,
                     nextEpisodeNumberToWatch,
                     seasonToUse.data!!.number
                 )
@@ -401,7 +400,7 @@ abstract class BasePlayerViewModel(
      */
     fun onEpisodeClick(episodeToWatch: Episode? = null) {
         if (loadLinksFromNewProviderJob?.isActive == true || loadLinksJob?.isActive == true) {
-            showErrorSnackbar(UiText.StringResource(UtilR.string.load_link_job_active_error_message))
+            showErrorSnackbar(UiText.StringResource(LocaleR.string.load_link_job_active_error_message))
             return
         }
 
@@ -431,7 +430,7 @@ abstract class BasePlayerViewModel(
                 }
             }
 
-            loadSourceData(episode)
+            loadMediaLinks(episode)
         }
     }
 
@@ -440,11 +439,11 @@ abstract class BasePlayerViewModel(
      *
      * @param episodeToWatch an optional parameter for the episode to watch if film to be watched is a [TvShow]
      */
-    fun loadSourceData(
+    fun loadMediaLinks(
         episodeToWatch: Episode? = null
     ) {
         if (loadLinksFromNewProviderJob?.isActive == true || loadLinksJob?.isActive == true) {
-            showErrorSnackbar(UiText.StringResource(UtilR.string.load_link_job_active_error_message))
+            showErrorSnackbar(UiText.StringResource(LocaleR.string.load_link_job_active_error_message))
             return
         }
 

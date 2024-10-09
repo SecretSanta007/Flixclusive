@@ -49,35 +49,30 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.flixclusive.core.ui.common.R
-import com.flixclusive.core.ui.common.navigation.CommonScreenNavigator
+import com.flixclusive.core.ui.common.navigation.navigator.FilmScreenNavigator
 import com.flixclusive.core.ui.common.util.onMediumEmphasis
 import com.flixclusive.core.ui.film.FilmScreenNavArgs
 import com.flixclusive.core.ui.mobile.component.RetryButton
 import com.flixclusive.core.ui.mobile.component.film.FilmCard
-import com.flixclusive.core.util.common.resource.Resource
-import com.flixclusive.core.util.film.FilmType
+import com.flixclusive.core.network.util.Resource
+import com.flixclusive.model.film.util.FilmType
 import com.flixclusive.feature.mobile.film.component.EpisodeCard
 import com.flixclusive.feature.mobile.film.component.EpisodeCardPlaceholder
 import com.flixclusive.feature.mobile.film.component.FilmOverview
 import com.flixclusive.feature.mobile.film.component.FilmScreenButtons
 import com.flixclusive.feature.mobile.film.component.FilmScreenHeader
 import com.flixclusive.feature.mobile.film.component.TvShowSeasonDropdown
-import com.flixclusive.model.tmdb.Film
-import com.flixclusive.model.tmdb.Genre
-import com.flixclusive.model.tmdb.Movie
-import com.flixclusive.model.tmdb.TvShow
-import com.flixclusive.model.tmdb.common.tv.Episode
+import com.flixclusive.model.film.Film
+import com.flixclusive.model.film.Movie
+import com.flixclusive.model.film.TvShow
+import com.flixclusive.model.film.common.tv.Episode
 import com.ramcosta.composedestinations.annotation.Destination
-import com.flixclusive.core.util.R as UtilR
+import com.flixclusive.core.locale.R as LocaleR
 
 internal enum class FilmTab(val stringId: Int) {
-    Episodes(UtilR.string.episodes),
-    MoreLikeThis(UtilR.string.more_like_this),
-    Collections(UtilR.string.collections)
-}
-
-interface FilmScreenNavigator : CommonScreenNavigator {
-    fun openGenreScreen(genre: Genre)
+    Episodes(LocaleR.string.episodes),
+    MoreLikeThis(LocaleR.string.more_like_this),
+    Collections(LocaleR.string.collections)
 }
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -85,7 +80,7 @@ interface FilmScreenNavigator : CommonScreenNavigator {
     navArgsDelegate = FilmScreenNavArgs::class
 )
 @Composable
-fun FilmScreen(
+internal fun FilmScreen(
     navigator: FilmScreenNavigator,
     previewFilm: (Film) -> Unit,
     play: (Film, Episode?) -> Unit,
@@ -355,7 +350,7 @@ private fun ContentTabs(
 }
 
 @Composable
-fun CollapsibleTopBar(
+private fun CollapsibleTopBar(
     title: String,
     isCollapsedProvider: () -> Boolean,
     onNavigationIconClick: () -> Unit,
@@ -387,7 +382,7 @@ fun CollapsibleTopBar(
                 IconButton(onClick = onNavigationIconClick) {
                     Icon(
                         painter = painterResource(R.drawable.left_arrow),
-                        contentDescription = stringResource(UtilR.string.navigate_up)
+                        contentDescription = stringResource(LocaleR.string.navigate_up)
                     )
                 }
 

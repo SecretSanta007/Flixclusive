@@ -4,27 +4,24 @@ import android.content.Context
 import androidx.core.app.NotificationCompat
 import com.flixclusive.core.datastore.AppSettingsManager
 import com.flixclusive.core.util.android.notify
-import com.flixclusive.core.util.common.dispatcher.AppDispatchers
-import com.flixclusive.core.util.common.dispatcher.Dispatcher
+import com.flixclusive.core.util.coroutines.AppDispatchers.Companion.withIOContext
 import com.flixclusive.core.util.log.errorLog
 import com.flixclusive.core.util.log.infoLog
-import com.flixclusive.core.util.network.fromJson
-import com.flixclusive.core.util.network.request
+import com.flixclusive.core.util.network.json.fromJson
+import com.flixclusive.core.util.network.okhttp.request
 import com.flixclusive.data.provider.ProviderManager
 import com.flixclusive.domain.updater.util.findProviderData
-import com.flixclusive.gradle.entities.ProviderData
+import com.flixclusive.model.provider.ProviderData
 import com.flixclusive.provider.Provider
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import java.util.Collections
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
 import com.flixclusive.core.ui.common.R as UiCommonR
-import com.flixclusive.core.util.R as UtilR
+import com.flixclusive.core.locale.R as LocaleR
 
 
 private typealias VersionCode = Long
@@ -34,7 +31,6 @@ private const val CHANNEL_UPDATER_NAME = "PROVIDER_UPDATER_CHANNEL"
 @Singleton
 class ProviderUpdaterUseCase @Inject constructor(
     @ApplicationContext private val context: Context,
-    @Dispatcher(AppDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
     private val providerManager: ProviderManager,
     private val appSettingsManager: AppSettingsManager,
     private val client: OkHttpClient,
@@ -67,16 +63,16 @@ class ProviderUpdaterUseCase @Inject constructor(
                 if (res == 0) return
 
                 if (res == -1) {
-                    context.getString(UtilR.string.failed_to_auto_update_providers_error_message)
+                    context.getString(LocaleR.string.failed_to_auto_update_providers_error_message)
                 } else {
-                    context.getString(UtilR.string.providers_updated_format,
+                    context.getString(LocaleR.string.providers_updated_format,
                         updatableProviders)
                 }
             }
             outdatedProviders.size > 0 -> {
-                context.getString(UtilR.string.updates_out_now_provider_format, updatableProviders)
+                context.getString(LocaleR.string.updates_out_now_provider_format, updatableProviders)
             }
-            else -> context.getString(UtilR.string.all_providers_updated)
+            else -> context.getString(LocaleR.string.all_providers_updated)
         }
 
         context.notify(
@@ -85,7 +81,7 @@ class ProviderUpdaterUseCase @Inject constructor(
             channelName = CHANNEL_UPDATER_NAME,
             shouldInitializeChannel = !notificationChannelHasBeenInitialized
         ) {
-            setContentTitle(context.getString(UtilR.string.flixclusive_providers))
+            setContentTitle(context.getString(LocaleR.string.flixclusive_providers))
             setContentText(notificationBody)
             setSmallIcon(UiCommonR.drawable.provider_logo)
             setOnlyAlertOnce(false)
@@ -153,11 +149,11 @@ class ProviderUpdaterUseCase @Inject constructor(
             return cached.data.findProviderData(name)
         }
 
-        val updaterJsonRequest = withContext(ioDispatcher) {
+        val updaterJsonRequest = withIOContext {
             client.request(manifest.updateUrl!!)
                 .execute()
                 .body?.string()
-                ?: return@withContext null
+                ?: return@withIOContext null
         } ?: return null
 
         val updaterJson = fromJson<List<ProviderData>>(updaterJsonRequest)

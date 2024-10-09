@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material3.Divider
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
@@ -19,51 +18,44 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.flixclusive.core.ui.common.navigation.navigator.PreferencesScreenNavigator
 import com.flixclusive.core.ui.common.util.onMediumEmphasis
 import com.flixclusive.feature.mobile.preferences.component.PreferencesItem
 import com.flixclusive.feature.mobile.preferences.component.ShareHeader
 import com.ramcosta.composedestinations.annotation.Destination
 import com.flixclusive.core.ui.common.R as UiCommonR
-import com.flixclusive.core.util.R as UtilR
-
-interface PreferencesScreenNavigator {
-    fun openWatchlistScreen()
-    fun openRecentlyWatchedScreen()
-    fun openSettingsScreen()
-    fun openAboutScreen()
-    fun checkForUpdates()
-}
+import com.flixclusive.core.locale.R as LocaleR
 
 @Destination
 @Composable
-fun PreferencesScreen(
+internal fun PreferencesScreen(
     navigator: PreferencesScreenNavigator
 ) {
     val items = remember {
         listOf(
             PreferencesNavigationItem(
                 iconId = UiCommonR.drawable.round_library,
-                labelId = UtilR.string.watchlist,
+                labelId = LocaleR.string.watchlist,
                 navigationAction = navigator::openWatchlistScreen
             ),
             PreferencesNavigationItem(
                 iconId = R.drawable.time_circle,
-                labelId = UtilR.string.recently_watched,
+                labelId = LocaleR.string.recently_watched,
                 navigationAction = navigator::openRecentlyWatchedScreen
             ),
             PreferencesNavigationItem(
                 iconId = UiCommonR.drawable.settings_filled,
-                labelId = UtilR.string.settings,
+                labelId = LocaleR.string.settings,
                 navigationAction = navigator::openSettingsScreen
             ),
             PreferencesNavigationItem(
                 iconId = UiCommonR.drawable.round_update_24,
-                labelId = UtilR.string.check_for_updates,
+                labelId = LocaleR.string.check_for_updates,
                 navigationAction = navigator::checkForUpdates
             ),
             PreferencesNavigationItem(
                 iconId = R.drawable.round_info_24,
-                labelId = UtilR.string.about,
+                labelId = LocaleR.string.about,
                 navigationAction = navigator::openAboutScreen
             )
         )
@@ -81,7 +73,7 @@ fun PreferencesScreen(
                 contentAlignment = Alignment.CenterStart
             ) {
                 Text(
-                    text = stringResource(id = UtilR.string.preferences),
+                    text = stringResource(id = LocaleR.string.preferences),
                     style = MaterialTheme.typography.headlineMedium,
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 1

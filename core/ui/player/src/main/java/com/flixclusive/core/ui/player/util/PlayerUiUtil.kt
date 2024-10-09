@@ -28,33 +28,33 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.ui.AspectRatioFrameLayout
+import com.flixclusive.core.locale.UiText
 import com.flixclusive.core.ui.player.FlixclusivePlayerManager
 import com.flixclusive.core.ui.player.PlayerSnackbarMessageType
 import com.flixclusive.core.ui.player.R
 import com.flixclusive.core.ui.player.databinding.CustomPlayerBinding
-import com.flixclusive.core.util.common.ui.UiText
-import com.flixclusive.core.util.film.FilmType
+import com.flixclusive.domain.provider.CachedLinks
 import com.flixclusive.model.database.util.calculateRemainingTime
 import com.flixclusive.model.database.util.isTimeInRangeOfThreshold
 import com.flixclusive.model.datastore.player.ResizeMode
-import com.flixclusive.model.provider.CachedLinks
-import com.flixclusive.model.provider.Stream
-import com.flixclusive.model.provider.Subtitle
-import com.flixclusive.model.tmdb.Film
-import com.flixclusive.model.tmdb.common.tv.Episode
+import com.flixclusive.model.film.Film
+import com.flixclusive.model.film.common.tv.Episode
+import com.flixclusive.model.film.util.FilmType
+import com.flixclusive.model.provider.link.Stream
+import com.flixclusive.model.provider.link.Subtitle
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import java.util.Locale
 import java.util.concurrent.TimeUnit
-import com.flixclusive.core.util.R as UtilR
+import com.flixclusive.core.locale.R as LocaleR
 
 @OptIn(UnstableApi::class)
 object PlayerUiUtil {
@@ -67,7 +67,7 @@ object PlayerUiUtil {
     fun rememberLocalPlayerManager(): State<FlixclusivePlayerManager> {
         val player = LocalPlayerManager.current
         check(player != null) {
-            stringResource(id = UtilR.string.player_not_initialized)
+            stringResource(id = LocaleR.string.player_not_initialized)
         }
 
         return rememberUpdatedState(player)
@@ -499,14 +499,14 @@ object PlayerUiUtil {
 
                         if (secondsLeft <= 0L) {
                             showSnackbar(
-                                UiText.StringResource(UtilR.string.loading_next_episode),
+                                UiText.StringResource(LocaleR.string.loading_next_episode),
                                 PlayerSnackbarMessageType.Episode
                             )
                             return@LaunchedEffect
                         }
 
                         showSnackbar(
-                            UiText.StringResource(UtilR.string.next_episode_on_format, secondsLeft),
+                            UiText.StringResource(LocaleR.string.next_episode_on_format, secondsLeft),
                             PlayerSnackbarMessageType.Episode
                         )
                     }

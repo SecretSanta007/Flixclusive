@@ -28,14 +28,14 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.flixclusive.core.ui.common.GradientCircularProgressIndicator
-import com.flixclusive.core.ui.common.navigation.UpdateDialogNavigator
+import com.flixclusive.core.ui.common.navigation.navigator.UpdateDialogNavigator
 import com.flixclusive.data.configuration.UpdateStatus
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.spec.DestinationStyle
+import com.flixclusive.core.locale.R as LocaleR
 import com.flixclusive.core.ui.common.R as UiCommonR
-import com.flixclusive.core.util.R as UtilR
 
-object DismissibleDialog : DestinationStyle.Dialog {
+internal object DismissibleDialog : DestinationStyle.Dialog {
     override val properties = DialogProperties(
         dismissOnClickOutside = true,
         dismissOnBackPress = true,
@@ -44,7 +44,7 @@ object DismissibleDialog : DestinationStyle.Dialog {
 
 @Destination(style = DismissibleDialog::class)
 @Composable
-fun UpdateDialog(
+internal fun UpdateDialog(
     navigator: UpdateDialogNavigator,
 ) {
     val viewModel = hiltViewModel<UpdateFeatureViewModel>()
@@ -56,7 +56,7 @@ fun UpdateDialog(
 
     LaunchedEffect(updateStatus) {
         if (
-            updateStatus == UpdateStatus.Outdated
+            updateStatus is UpdateStatus.Outdated
             && viewModel.appUpdateCheckerUseCase.updateUrl != null
             && viewModel.appUpdateCheckerUseCase.newVersion != null
         ) {
@@ -105,7 +105,7 @@ fun UpdateDialog(
                         }
 
                         Text(
-                            text = stringResource(id = UtilR.string.checking_for_updates),
+                            text = stringResource(id = LocaleR.string.checking_for_updates),
                             style = MaterialTheme.typography.labelLarge
                         )
                     }
@@ -123,7 +123,7 @@ fun UpdateDialog(
                     ) {
                         Icon(
                             painter = painterResource(id = UiCommonR.drawable.round_error_outline_24),
-                            contentDescription = stringResource(id = UtilR.string.error_icon_content_desc),
+                            contentDescription = stringResource(id = LocaleR.string.error_icon_content_desc),
                             tint = MaterialTheme.colorScheme.error,
                             modifier = Modifier
                                 .size(80.dp)
@@ -131,8 +131,8 @@ fun UpdateDialog(
                         )
 
                         Text(
-                            text = updateStatus?.errorMessage?.asString()
-                                ?: stringResource(id = UtilR.string.failed_checking_for_updates),
+                            text = updateStatus.errorMessage?.asString()
+                                ?: stringResource(id = LocaleR.string.failed_checking_for_updates),
                             style = MaterialTheme.typography.labelLarge,
                             textAlign = TextAlign.Center
                         )
@@ -140,7 +140,7 @@ fun UpdateDialog(
                 }
 
                 AnimatedVisibility(
-                    visible = updateStatus == UpdateStatus.UpToDate,
+                    visible = updateStatus is UpdateStatus.UpToDate,
                     enter = fadeIn(),
                     exit = fadeOut()
                 ) {
@@ -159,7 +159,7 @@ fun UpdateDialog(
                         )
 
                         Text(
-                            text = stringResource(id = UtilR.string.up_to_date),
+                            text = stringResource(id = LocaleR.string.up_to_date),
                             style = MaterialTheme.typography.labelLarge,
                             textAlign = TextAlign.Center
                         )

@@ -37,11 +37,11 @@ import androidx.tv.material3.Surface
 import androidx.tv.material3.Text
 import com.flixclusive.core.theme.FlixclusiveTheme
 import com.flixclusive.core.ui.common.util.onMediumEmphasis
-import com.flixclusive.core.util.common.ui.UiText
-import com.flixclusive.core.util.R as UtilR
+import com.flixclusive.core.locale.UiText
+import com.flixclusive.core.locale.R as LocaleR
 
 @Composable
-fun FilmErrorSnackbar(
+internal fun FilmErrorSnackbar(
     errorMessage: UiText?,
     modifier: Modifier = Modifier,
 ) {
@@ -80,7 +80,7 @@ fun FilmErrorSnackbar(
                         )
                 ) {
                     Text(
-                        text = stringResource(id = UtilR.string.something_went_wrong),
+                        text = stringResource(id = LocaleR.string.something_went_wrong),
                         style = MaterialTheme.typography.headlineSmall.copy(
                             fontSize = 20.sp,
                             fontWeight = FontWeight.SemiBold,

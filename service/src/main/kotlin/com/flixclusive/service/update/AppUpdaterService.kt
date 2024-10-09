@@ -20,7 +20,7 @@ import com.flixclusive.core.ui.common.util.showToast
 import com.flixclusive.core.util.android.createChannel
 import com.flixclusive.core.util.android.notificationManager
 import com.flixclusive.core.util.android.saveTo
-import com.flixclusive.core.util.common.dispatcher.di.ApplicationScope
+import com.flixclusive.core.util.coroutines.AppDispatchers
 import com.flixclusive.core.util.log.errorLog
 import com.flixclusive.data.configuration.AppConfigurationManager
 import com.flixclusive.service.update.util.ProgressListener
@@ -29,7 +29,6 @@ import com.flixclusive.service.update.util.getUriCompat
 import com.flixclusive.service.update.util.newCachelessCallWithProgress
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -41,7 +40,7 @@ import okhttp3.internal.http2.ErrorCode
 import okhttp3.internal.http2.StreamResetException
 import java.io.File
 import javax.inject.Inject
-import com.flixclusive.core.util.R as UtilR
+import com.flixclusive.core.locale.R as LocaleR
 
 internal const val CHANNEL_UPDATER_NAME = "app updater"
 internal const val CHANNEL_UPDATER_ID = "in_app_updater_channel"
@@ -52,10 +51,6 @@ internal const val EXTRA_UPDATE_URL = "update_url"
 @AndroidEntryPoint
 class AppUpdaterService : Service() {
     private lateinit var wakeLock: PowerManager.WakeLock
-
-    @Inject
-    @ApplicationScope
-    lateinit var ioScope: CoroutineScope
 
     @Inject
     lateinit var client: OkHttpClient
@@ -103,9 +98,9 @@ class AppUpdaterService : Service() {
         if (intent == null) return START_NOT_STICKY
 
         val url = intent.getStringExtra(EXTRA_UPDATE_URL) ?: return START_NOT_STICKY
-        val title = getString(UtilR.string.app_name)
+        val title = getString(LocaleR.string.app_name)
 
-        downloadingJob = ioScope.launch {
+        downloadingJob = AppDispatchers.Default.scope.launch {
             downloadApk(title, url)
         }
 
@@ -200,7 +195,7 @@ class AppUpdaterService : Service() {
                 // Run on ui thread
                 Handler(Looper.getMainLooper()).post {
                     showToast(
-                        message = getString(UtilR.string.failed_to_download_updates, e.localizedMessage),
+                        message = getString(LocaleR.string.failed_to_download_updates, e.localizedMessage),
                         duration = Toast.LENGTH_LONG
                     )
                 }

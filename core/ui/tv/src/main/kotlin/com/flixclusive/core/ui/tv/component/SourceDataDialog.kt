@@ -30,9 +30,9 @@ import androidx.tv.material3.Surface
 import androidx.tv.material3.Text
 import com.flixclusive.core.theme.FlixclusiveTheme
 import com.flixclusive.core.ui.common.GradientCircularProgressIndicator
-import com.flixclusive.model.provider.MediaLinkResourceState
+import com.flixclusive.core.ui.common.provider.MediaLinkResourceState
+import com.flixclusive.core.locale.R as LocaleR
 import com.flixclusive.core.ui.common.R as UiCommonR
-import com.flixclusive.core.util.R as UtilR
 
 @Composable
 fun SourceDataDialog(
@@ -83,7 +83,7 @@ private fun SourceDataDialogContent(
                 contentAlignment = Alignment.Center
             ) {
                 this@Column.AnimatedVisibility(
-                    visible = state !is MediaLinkResourceState.Error && state !is MediaLinkResourceState.Unavailable,
+                    visible = !state.isError,
                     enter = fadeIn(),
                     exit = fadeOut()
                 ) {
@@ -112,7 +112,7 @@ private fun SourceDataDialogContent(
                 }
 
                 this@Column.AnimatedVisibility(
-                    visible = state is MediaLinkResourceState.Error || state is MediaLinkResourceState.Unavailable,
+                    visible = state.isError,
                     enter = fadeIn(),
                     exit = fadeOut()
                 ) {
@@ -123,7 +123,7 @@ private fun SourceDataDialogContent(
                     ) {
                         Icon(
                             painter = painterResource(id = UiCommonR.drawable.round_error_outline_24),
-                            contentDescription = stringResource(id = UtilR.string.error_icon_content_desc),
+                            contentDescription = stringResource(id = LocaleR.string.error_icon_content_desc),
                             tint = MaterialTheme.colorScheme.error,
                             modifier = Modifier
                                 .size(80.dp)
@@ -146,7 +146,7 @@ private fun SourceDataDialogContent(
             exit = fadeOut()
         ){
             Button(onClick = onSkipExtractingPhase) {
-                Text(text = stringResource(id = UtilR.string.skip_loading_message))
+                Text(text = stringResource(id = LocaleR.string.skip_loading_message))
             }
         }
     }

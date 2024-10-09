@@ -1,20 +1,20 @@
 package com.flixclusive.domain.provider.util
 
-import com.flixclusive.core.util.common.ui.UiText
-import com.flixclusive.model.provider.MediaLinkResourceState
+import com.flixclusive.core.locale.UiText
+import com.flixclusive.core.ui.common.provider.MediaLinkResourceState
 import kotlinx.coroutines.channels.ProducerScope
-import com.flixclusive.core.util.R as UtilR
+import com.flixclusive.core.locale.R as LocaleR
 
 internal object GetMediaLinksStateMessageHelper {
     fun ProducerScope<MediaLinkResourceState>.sendFetchingEpisodeMessage() =
-        trySend(MediaLinkResourceState.Fetching(UiText.StringResource(UtilR.string.fetching_episode_message)))
+        trySend(MediaLinkResourceState.Fetching(UiText.StringResource(LocaleR.string.fetching_episode_message)))
 
     fun ProducerScope<MediaLinkResourceState>.sendFetchingFilmMessage(
         provider: String
     ) = trySend(
         MediaLinkResourceState.Fetching(
             UiText.StringResource(
-                UtilR.string.fetching_from_provider_format,
+                LocaleR.string.fetching_from_provider_format,
                 provider
             )
         )
@@ -25,8 +25,8 @@ internal object GetMediaLinksStateMessageHelper {
         isOnWebView: Boolean = false
     ) {
         val messageFormat = if (isOnWebView) {
-            UtilR.string.extracting_from_web_view_provider_format
-        } else UtilR.string.extracting_from_provider_format
+            LocaleR.string.extracting_from_web_view_provider_format
+        } else LocaleR.string.extracting_from_provider_format
 
         trySend(
             MediaLinkResourceState.Extracting(
@@ -42,7 +42,9 @@ internal object GetMediaLinksStateMessageHelper {
         trySend(MediaLinkResourceState.Error(error))
 
     fun ProducerScope<MediaLinkResourceState>.throwUnavailableError(error: UiText?) =
-        trySend(MediaLinkResourceState.Error(error))
+        trySend(MediaLinkResourceState.Unavailable(error))
 
     fun ProducerScope<MediaLinkResourceState>.finish() = trySend(MediaLinkResourceState.Success)
+
+    fun ProducerScope<MediaLinkResourceState>.finishWithTrustedProviders() = trySend(MediaLinkResourceState.SuccessWithTrustedProviders)
 }

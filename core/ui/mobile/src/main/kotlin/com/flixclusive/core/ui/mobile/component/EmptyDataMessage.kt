@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -27,7 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.flixclusive.core.theme.FlixclusiveTheme
 import com.flixclusive.core.ui.common.util.onMediumEmphasis
-import com.flixclusive.core.util.R as UtilR
+import com.flixclusive.core.locale.R as LocaleR
 
 @Composable
 private fun getDefaultTitleStyle()
@@ -47,8 +48,8 @@ private fun getDefaultDescriptionStyle()
 @Composable
 fun EmptyDataMessage(
     modifier: Modifier = Modifier,
-    title: String = stringResource(id = UtilR.string.empty_data_default_label),
-    description: String = stringResource(id = UtilR.string.empty_data_default_sub_label),
+    title: String = stringResource(id = LocaleR.string.empty_data_default_label),
+    description: String = stringResource(id = LocaleR.string.empty_data_default_sub_label),
     titleStyle: TextStyle = getDefaultTitleStyle(),
     descriptionStyle: TextStyle = getDefaultDescriptionStyle(),
     alignment: Alignment = Alignment.Center,
@@ -80,33 +81,36 @@ fun EmptyDataMessage(
                 )
             }
 
-            Text(
-                text = buildAnnotatedString {
-                    withStyle(
-                        ParagraphStyle(
-                            lineHeight = 20.sp,
-                            textAlign = TextAlign.Center,
-                        )
-                    ) {
-                        withStyle(
-                            style = titleStyle.toSpanStyle()
-                        ) {
-                            append(titleUppercase)
-                        }
 
-                        append("\n")
-
+            SelectionContainer {
+                Text(
+                    text = buildAnnotatedString {
                         withStyle(
-                            style = descriptionStyle.toSpanStyle()
+                            ParagraphStyle(
+                                lineHeight = 20.sp,
+                                textAlign = TextAlign.Center,
+                            )
                         ) {
-                            append(description)
+                            withStyle(
+                                style = titleStyle.toSpanStyle()
+                            ) {
+                                append(titleUppercase)
+                            }
+
+                            append("\n")
+
+                            withStyle(
+                                style = descriptionStyle.toSpanStyle()
+                            ) {
+                                append(description)
+                            }
                         }
-                    }
-                },
-                style = titleStyle,
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-            )
+                    },
+                    style = titleStyle,
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
+                )
+            }
         }
     }
 }

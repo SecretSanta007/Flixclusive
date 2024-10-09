@@ -8,12 +8,12 @@ import com.flixclusive.core.network.util.serializers.FilmSearchItemDeserializer
 import com.flixclusive.core.network.util.serializers.PaginatedSearchItemsDeserializer
 import com.flixclusive.core.network.util.serializers.TMDBMovieDeserializer
 import com.flixclusive.core.network.util.serializers.TMDBTvShowDeserializer
-import com.flixclusive.core.util.common.configuration.GITHUB_API_BASE_URL
-import com.flixclusive.core.util.common.configuration.GITHUB_RAW_API_BASE_URL
-import com.flixclusive.model.tmdb.FilmSearchItem
-import com.flixclusive.model.tmdb.Movie
-import com.flixclusive.model.tmdb.SearchResponseData
-import com.flixclusive.model.tmdb.TvShow
+import com.flixclusive.core.util.common.GithubConstant.GITHUB_API_BASE_URL
+import com.flixclusive.core.util.common.GithubConstant.GITHUB_RAW_API_BASE_URL
+import com.flixclusive.model.film.FilmSearchItem
+import com.flixclusive.model.film.Movie
+import com.flixclusive.model.film.SearchResponseData
+import com.flixclusive.model.film.TvShow
 import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
@@ -26,11 +26,11 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object RetrofitModule {
+internal object RetrofitModule {
 
     @Provides
     @Singleton
-    internal fun provideTMDBApiService(
+    fun provideTMDBApiService(
         client: OkHttpClient
     ): TMDBApiService {
         val searchResponseData = SearchResponseData<FilmSearchItem>()
@@ -52,7 +52,7 @@ object RetrofitModule {
 
     @Provides
     @Singleton
-    internal fun provideGithubRawApiService(
+    fun provideGithubRawApiService(
         client: OkHttpClient
     ): GithubRawApiService =
         Retrofit.Builder()
@@ -64,7 +64,7 @@ object RetrofitModule {
 
     @Provides
     @Singleton
-    internal fun provideGithubApiService(
+    fun provideGithubApiService(
         client: OkHttpClient
     ): GithubApiService =
         Retrofit.Builder()

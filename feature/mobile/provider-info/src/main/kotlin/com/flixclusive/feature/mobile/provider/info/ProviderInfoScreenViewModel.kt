@@ -7,29 +7,27 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.flixclusive.core.datastore.AppSettingsManager
-import com.flixclusive.core.ui.common.navigation.ProviderInfoScreenNavArgs
+import com.flixclusive.core.ui.common.navigation.navargs.ProviderInfoScreenNavArgs
 import com.flixclusive.core.ui.mobile.component.provider.ProviderInstallationStatus
-import com.flixclusive.core.util.common.dispatcher.di.ApplicationScope
-import com.flixclusive.core.util.common.resource.Resource
-import com.flixclusive.core.util.common.ui.UiText
+import com.flixclusive.core.util.coroutines.AppDispatchers
+import com.flixclusive.core.network.util.Resource
+import com.flixclusive.core.locale.UiText
 import com.flixclusive.data.provider.ProviderManager
 import com.flixclusive.domain.provider.GetRepositoryUseCase
 import com.flixclusive.domain.provider.util.extractGithubInfoFromLink
 import com.flixclusive.domain.updater.ProviderUpdaterUseCase
-import com.flixclusive.gradle.entities.Repository
+import com.flixclusive.model.provider.Repository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import com.flixclusive.core.util.R as UtilR
+import com.flixclusive.core.locale.R as LocaleR
 
 @HiltViewModel
-class ProviderInfoScreenViewModel @Inject constructor(
-    @ApplicationScope private val scope: CoroutineScope,
+internal class ProviderInfoScreenViewModel @Inject constructor(
     private val appSettingsManager: AppSettingsManager,
     private val getRepositoryUseCase: GetRepositoryUseCase,
     private val providerManager: ProviderManager,
@@ -87,7 +85,7 @@ class ProviderInfoScreenViewModel @Inject constructor(
         if (providerJob?.isActive == true)
             return
 
-        providerJob = scope.launch {
+        providerJob = AppDispatchers.Default.scope.launch {
             when (providerInstallationStatus) {
                 ProviderInstallationStatus.NotInstalled -> installProvider()
                 ProviderInstallationStatus.Outdated -> updateProvider()
@@ -108,7 +106,7 @@ class ProviderInfoScreenViewModel @Inject constructor(
         } catch (_: Exception) {
             snackbar = Resource.Failure(
                 UiText.StringResource(
-                    UtilR.string.failed_to_load_provider,
+                    LocaleR.string.failed_to_load_provider,
                     oldProviderData.name
                 )
             )
@@ -131,7 +129,7 @@ class ProviderInfoScreenViewModel @Inject constructor(
             providerInstallationStatus = ProviderInstallationStatus.Installed
         } else {
             snackbar =
-                Resource.Failure(UiText.StringResource(UtilR.string.failed_to_update_provider))
+                Resource.Failure(UiText.StringResource(LocaleR.string.failed_to_update_provider))
         }
     }
 

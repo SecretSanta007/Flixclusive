@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Divider
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
@@ -40,9 +39,10 @@ import androidx.compose.ui.unit.sp
 import com.flixclusive.core.theme.FlixclusiveTheme
 import com.flixclusive.core.ui.common.util.onMediumEmphasis
 import com.flixclusive.core.ui.common.util.showToast
+import com.flixclusive.core.locale.R as LocaleR
 import com.flixclusive.core.ui.common.R as UiCommonR
-import com.flixclusive.core.util.R as UtilR
 
+// TODO: Make this internal once TV UI gets its own CrashScreen
 @Composable
 fun CrashMobileScreen(
     softwareInfo: String? = null,
@@ -52,8 +52,8 @@ fun CrashMobileScreen(
     val clipboardManager = LocalClipboardManager.current
     val context = LocalContext.current
 
-    val errorMessageToUse = errorMessage ?: stringResource(UtilR.string.default_error)
-    val copyMessage = stringResource(UtilR.string.copy_stack_trace_message)
+    val errorMessageToUse = errorMessage ?: stringResource(LocaleR.string.default_error)
+    val copyMessage = stringResource(LocaleR.string.copy_stack_trace_message)
 
     Surface(
         modifier = Modifier
@@ -65,14 +65,14 @@ fun CrashMobileScreen(
             modifier = Modifier.padding(20.dp)
         ) {
             Text(
-                text = stringResource(id = UtilR.string.error_crash_title),
+                text = stringResource(id = LocaleR.string.error_crash_title),
                 style = MaterialTheme.typography.headlineMedium.copy(
                     fontSize = 80.sp, fontWeight = FontWeight.Bold
                 )
             )
 
             Text(
-                text = stringResource(id = UtilR.string.something_went_wrong),
+                text = stringResource(id = LocaleR.string.something_went_wrong),
                 style = MaterialTheme.typography.headlineMedium.copy(
                     fontSize = 30.sp, fontWeight = FontWeight.Bold
                 )
@@ -142,7 +142,7 @@ fun CrashMobileScreen(
                     ) {
                         Icon(
                             painter = painterResource(UiCommonR.drawable.round_content_copy_24),
-                            contentDescription = "Copy button for error stack trace",
+                            contentDescription = stringResource(LocaleR.string.copy_stack_trace_content_desc),
                         )
                     }
                 }
@@ -161,7 +161,7 @@ fun CrashMobileScreen(
                     .padding(vertical = 5.dp)
             ) {
                 Text(
-                    text = stringResource(UtilR.string.restart),
+                    text = stringResource(LocaleR.string.restart),
                     style = MaterialTheme.typography.labelLarge.copy(
                         fontSize = 16.sp
                     ),

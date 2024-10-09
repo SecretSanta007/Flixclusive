@@ -1,7 +1,7 @@
 package com.flixclusive.core.network.retrofit
 
-import com.flixclusive.core.util.common.configuration.GITHUB_REPOSITORY
-import com.flixclusive.core.util.common.configuration.GITHUB_USERNAME
+import com.flixclusive.core.util.common.GithubConstant.GITHUB_REPOSITORY
+import com.flixclusive.core.util.common.GithubConstant.GITHUB_USERNAME
 import com.flixclusive.model.configuration.GithubBranchInfo
 import com.flixclusive.model.configuration.GithubReleaseInfo
 import com.flixclusive.model.configuration.GithubTagInfo
@@ -24,7 +24,7 @@ interface GithubApiService {
     ): GithubBranchInfo
 
     /**
-     * Retrieves the release notes for the given tag.
+     * Retrieves the release for the given tag.
      *
      * @param tag The tag name.
      * @return A [GithubReleaseInfo] object.
@@ -35,9 +35,16 @@ interface GithubApiService {
     ): GithubReleaseInfo
 
     /**
+     * Retrieves the latest stable release for the given tag.
+     *
+     * @return A [GithubReleaseInfo] object.
+     */
+    @GET("repos/$GITHUB_USERNAME/$GITHUB_REPOSITORY/releases/latest")
+    suspend fun getStableReleaseInfo(): GithubReleaseInfo
+
+    /**
      * Retrieves the release notes for the given tag.
      *
-     * @param tag The tag name.
      * @return A [GithubReleaseInfo] object.
      */
     @GET("repos/$GITHUB_USERNAME/$GITHUB_REPOSITORY/tags")

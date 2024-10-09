@@ -8,32 +8,31 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.flixclusive.core.datastore.AppSettingsManager
+import com.flixclusive.core.ui.common.navigation.navargs.RepositoryScreenNavArgs
 import com.flixclusive.core.ui.mobile.component.provider.ProviderInstallationStatus
-import com.flixclusive.core.util.common.dispatcher.di.ApplicationScope
-import com.flixclusive.core.util.common.resource.Resource
-import com.flixclusive.core.util.common.ui.UiText
+import com.flixclusive.core.util.coroutines.AppDispatchers
+import com.flixclusive.core.network.util.Resource
+import com.flixclusive.core.locale.UiText
 import com.flixclusive.core.util.log.errorLog
 import com.flixclusive.data.provider.ProviderManager
 import com.flixclusive.domain.provider.GetOnlineProvidersUseCase
 import com.flixclusive.domain.updater.ProviderUpdaterUseCase
-import com.flixclusive.gradle.entities.ProviderData
+import com.flixclusive.model.provider.ProviderData
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import com.flixclusive.core.util.R as UtilR
+import com.flixclusive.core.locale.R as LocaleR
 
 @HiltViewModel
-class RepositoryScreenViewModel @Inject constructor(
+internal class RepositoryScreenViewModel @Inject constructor(
     private val providerManager: ProviderManager,
     private val providerUpdaterUseCase: ProviderUpdaterUseCase,
     private val getOnlineProvidersUseCase: GetOnlineProvidersUseCase,
     private val appSettingsManager: AppSettingsManager,
-    @ApplicationScope private val scope: CoroutineScope,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     val repository = savedStateHandle.navArgs<RepositoryScreenNavArgs>().repository
@@ -105,7 +104,7 @@ class RepositoryScreenViewModel @Inject constructor(
             return
         }
 
-        installAllJob = scope.launch {
+        installAllJob = AppDispatchers.Default.scope.launch {
             val failedToInstallProviders = arrayListOf<String>()
 
             onlineProviderMap.forEach { (data, state) ->
@@ -121,11 +120,11 @@ class RepositoryScreenViewModel @Inject constructor(
             if (failedToInstallProviders.isNotEmpty()) {
                 val failedProviders = failedToInstallProviders.joinToString(", ")
 
-                snackbar = Resource.Failure(UiText.StringResource(UtilR.string.failed_to_load_provider, failedProviders))
+                snackbar = Resource.Failure(UiText.StringResource(LocaleR.string.failed_to_load_provider, failedProviders))
                 return@launch
             }
 
-            snackbar = Resource.Failure(UiText.StringResource(UtilR.string.all_providers_installed))
+            snackbar = Resource.Failure(UiText.StringResource(LocaleR.string.all_providers_installed))
         }
     }
 
@@ -134,7 +133,7 @@ class RepositoryScreenViewModel @Inject constructor(
             return
         }
 
-        installJob = scope.launch {
+        installJob = AppDispatchers.Default.scope.launch {
             when (onlineProviderMap[providerData]) {
                 ProviderInstallationStatus.NotInstalled -> installProvider(providerData)
                 ProviderInstallationStatus.Installed -> uninstallProvider(providerData)
@@ -151,7 +150,7 @@ class RepositoryScreenViewModel @Inject constructor(
             onlineProviderMap[providerData] = ProviderInstallationStatus.Installed
         } else {
             snackbar =
-                Resource.Failure(UiText.StringResource(UtilR.string.failed_to_update_provider))
+                Resource.Failure(UiText.StringResource(LocaleR.string.failed_to_update_provider))
         }
     }
 
@@ -164,7 +163,7 @@ class RepositoryScreenViewModel @Inject constructor(
                 needsDownload = true
             )
         } catch (_: Exception) {
-            snackbar = Resource.Failure(UiText.StringResource(UtilR.string.failed_to_load_provider, providerData.name))
+            snackbar = Resource.Failure(UiText.StringResource(LocaleR.string.failed_to_load_provider, providerData.name))
             onlineProviderMap[providerData] = ProviderInstallationStatus.NotInstalled
             return false
         }

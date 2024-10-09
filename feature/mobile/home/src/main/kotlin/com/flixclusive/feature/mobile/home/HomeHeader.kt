@@ -53,12 +53,12 @@ import com.flixclusive.core.ui.common.util.fadingEdge
 import com.flixclusive.core.ui.common.util.placeholderEffect
 import com.flixclusive.core.ui.mobile.component.film.GenreButton
 import com.flixclusive.core.ui.common.util.onMediumEmphasis
-import com.flixclusive.core.util.film.formatRating
-import com.flixclusive.model.tmdb.Film
-import com.flixclusive.model.tmdb.Genre
+import com.flixclusive.core.ui.common.util.formatRating
+import com.flixclusive.model.film.Film
+import com.flixclusive.model.film.Genre
 import kotlin.random.Random
 import com.flixclusive.core.ui.common.R as UiCommonR
-import com.flixclusive.core.util.R as UtilR
+import com.flixclusive.core.locale.R as LocaleR
 
 @OptIn(ExperimentalLayoutApi::class, ExperimentalFoundationApi::class)
 @Composable
@@ -102,7 +102,7 @@ internal fun HomeHeader(
             imageLoader = LocalContext.current.imageLoader,
             placeholder = painterResource(UiCommonR.drawable.movie_placeholder),
             error = painterResource(UiCommonR.drawable.movie_placeholder),
-            contentDescription = stringResource(UtilR.string.popular),
+            contentDescription = stringResource(LocaleR.string.popular),
             contentScale = ContentScale.Crop,
             modifier = modifier
                 .combinedClickable(
@@ -175,7 +175,7 @@ internal fun HomeHeader(
                 ) {
                     Icon(
                         imageVector = Icons.Rounded.Star,
-                        contentDescription = stringResource(UtilR.string.rating_icon),
+                        contentDescription = stringResource(LocaleR.string.rating_icon),
                         modifier = Modifier.scale(0.6F),
                         tint = starColor
                     )
@@ -207,7 +207,7 @@ internal fun HomeHeader(
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun HomeHeaderPlaceholder(
+internal fun HomeHeaderPlaceholder(
     modifier: Modifier = Modifier
 ) {
     val listBottomFade = Brush.verticalGradient(0.8f to Color.Red, 0.9f to Color.Transparent)

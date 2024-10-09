@@ -33,17 +33,17 @@ import com.flixclusive.core.ui.common.util.onMediumEmphasis
 import com.flixclusive.core.ui.mobile.component.film.FilmCard
 import com.flixclusive.core.ui.mobile.component.film.FilmCardPlaceholder
 import com.flixclusive.core.ui.mobile.util.shouldPaginate
-import com.flixclusive.core.util.common.ui.PagingState
+import com.flixclusive.core.ui.common.util.PagingState
 import com.flixclusive.domain.home.PaginationStateInfo
-import com.flixclusive.model.tmdb.Film
-import com.flixclusive.model.tmdb.category.Category
+import com.flixclusive.model.film.Film
+import com.flixclusive.model.provider.Catalog
 import com.flixclusive.core.ui.mobile.R as UiMobileR
-import com.flixclusive.core.util.R as UtilR
+import com.flixclusive.core.locale.R as LocaleR
 
 @Composable
 internal fun HomeFilmsRow(
     modifier: Modifier = Modifier,
-    categoryItem: Category,
+    catalogItem: Catalog,
     paginationState: PaginationStateInfo,
     showCardTitle: Boolean,
     films: List<Film>,
@@ -89,7 +89,7 @@ internal fun HomeFilmsRow(
                         .padding(vertical = 10.dp)
                 ) {
                     Text(
-                        text = categoryItem.name,
+                        text = catalogItem.name,
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.Medium,
                         modifier = Modifier
@@ -104,7 +104,7 @@ internal fun HomeFilmsRow(
                     ) {
                         Icon(
                             painter = painterResource(id = UiMobileR.drawable.right_arrow),
-                            contentDescription = stringResource(id = UtilR.string.see_all),
+                            contentDescription = stringResource(id = LocaleR.string.see_all),
                             tint = LocalContentColor.current.onMediumEmphasis(),
                             modifier = Modifier
                                 .size(14.dp)

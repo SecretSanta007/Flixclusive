@@ -43,6 +43,7 @@ import androidx.tv.material3.Surface
 import androidx.tv.material3.Text
 import com.flixclusive.core.theme.FlixclusiveTheme
 import com.flixclusive.core.ui.common.GradientCircularProgressIndicator
+import com.flixclusive.core.ui.common.provider.MediaLinkResourceState
 import com.flixclusive.core.ui.common.util.DummyDataForPreview.getDummyProviderApi
 import com.flixclusive.core.ui.player.FlixclusivePlayerManager
 import com.flixclusive.core.ui.player.PlayerUiState
@@ -56,15 +57,14 @@ import com.flixclusive.feature.tv.player.controls.settings.ServersPanel
 import com.flixclusive.feature.tv.player.controls.settings.SubtitleStylePanel
 import com.flixclusive.feature.tv.player.controls.settings.SubtitleSyncPanel
 import com.flixclusive.model.datastore.AppSettings
-import com.flixclusive.model.provider.MediaLinkResourceState
-import com.flixclusive.model.provider.Stream
-import com.flixclusive.model.tmdb.common.tv.Episode
+import com.flixclusive.model.film.common.tv.Episode
+import com.flixclusive.model.provider.link.Stream
 import com.flixclusive.provider.ProviderApi
 import kotlinx.coroutines.delay
 import okhttp3.OkHttpClient
 import kotlin.math.abs
+import com.flixclusive.core.locale.R as LocaleR
 import com.flixclusive.core.ui.common.R as UiCommonR
-import com.flixclusive.core.util.R as UtilR
 
 @OptIn(ExperimentalTvMaterial3Api::class)
 @Composable
@@ -102,7 +102,7 @@ internal fun PlaybackControls(
     val isLoading = remember(player.playbackState, dialogState, seekMultiplier) {
         player.playbackState == Player.STATE_BUFFERING
         && seekMultiplier == 0L
-        || dialogState !is MediaLinkResourceState.Success
+        || !dialogState.isSuccess
     }
 
     val topFadeEdge = Brush.verticalGradient(
@@ -377,7 +377,7 @@ private fun PlaybackControlsPreview() {
                 Box {
                     Image(
                         painter = painterResource(id = UiCommonR.drawable.sample_movie_subtitle_preview),
-                        contentDescription = stringResource(UtilR.string.sample_movie_content_desc),
+                        contentDescription = stringResource(LocaleR.string.sample_movie_content_desc),
                         modifier = Modifier
                             .fillMaxSize()
                     )

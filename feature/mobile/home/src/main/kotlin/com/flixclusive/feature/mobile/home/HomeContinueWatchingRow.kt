@@ -40,15 +40,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.flixclusive.core.locale.UiText
 import com.flixclusive.core.ui.common.FilmCover
+import com.flixclusive.core.ui.common.util.formatMinutes
 import com.flixclusive.core.ui.common.util.onMediumEmphasis
-import com.flixclusive.core.util.common.ui.UiText
-import com.flixclusive.core.util.film.formatMinutes
 import com.flixclusive.model.database.WatchHistoryItem
 import com.flixclusive.model.database.util.getNextEpisodeToWatch
-import com.flixclusive.model.tmdb.Film
+import com.flixclusive.model.film.Film
+import com.flixclusive.core.locale.R as LocaleR
 import com.flixclusive.core.ui.common.R as UiCommonR
-import com.flixclusive.core.util.R as UtilR
 
 @Composable
 internal fun HomeContinueWatchingRow(
@@ -65,7 +65,7 @@ internal fun HomeContinueWatchingRow(
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             Text(
-                text = stringResource(UtilR.string.continue_watching),
+                text = stringResource(LocaleR.string.continue_watching),
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.Medium,
                 modifier = Modifier
@@ -180,7 +180,7 @@ private fun ContinueWatchingCard(
             ) {
                 Icon(
                     painter = painterResource(id = UiCommonR.drawable.play),
-                    contentDescription = stringResource(id = UtilR.string.play_button),
+                    contentDescription = stringResource(id = LocaleR.string.play_button),
                     modifier = Modifier
                         .size(30.dp)
                         .align(Alignment.Center),
@@ -216,10 +216,11 @@ private fun ContinueWatchingCard(
                     )
 
                     LinearProgressIndicator(
-                        progress = progress,
+                        progress = { progress },
+                        modifier = Modifier.clip(MaterialTheme.shapes.large),
                         color = MaterialTheme.colorScheme.primary,
                         trackColor = MaterialTheme.colorScheme.primary.copy(0.4F),
-                        modifier = Modifier.clip(MaterialTheme.shapes.large)
+                        drawStopIndicator = {}
                     )
                 }
             }
@@ -232,7 +233,7 @@ private fun ContinueWatchingCard(
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.round_more_vert_24),
-                    contentDescription = stringResource(UtilR.string.see_more_btn_content_desc),
+                    contentDescription = stringResource(LocaleR.string.see_more_btn_content_desc),
                     tint = Color.White
                 )
             }

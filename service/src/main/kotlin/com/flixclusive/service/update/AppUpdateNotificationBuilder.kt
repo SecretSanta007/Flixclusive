@@ -1,15 +1,15 @@
 package com.flixclusive.service.update
 
+import android.app.PendingIntent
 import android.content.Context
 import android.net.Uri
 import androidx.core.app.NotificationCompat
 import com.flixclusive.core.util.android.installApkActivity
-import com.flixclusive.core.util.android.installApkPendingActivity
 import com.flixclusive.core.util.android.notificationBuilder
 import com.flixclusive.core.util.android.notify
 import com.flixclusive.service.R
+import com.flixclusive.core.locale.R as LocaleR
 import com.flixclusive.core.ui.common.R as UiCommonR
-import com.flixclusive.core.util.R as UtilR
 
 class AppUpdateNotificationBuilder(
     private val context: Context
@@ -26,14 +26,14 @@ class AppUpdateNotificationBuilder(
     fun onDownloadStarted(title: String? = null): NotificationCompat.Builder {
         with(notificationBuilder) {
             title?.let { setContentTitle(title) }
-            setContentText(context.getString(UtilR.string.download_in_progress))
+            setContentText(context.getString(LocaleR.string.download_in_progress))
             setSmallIcon(android.R.drawable.stat_sys_download)
             setOngoing(true)
 
             clearActions()
             addAction(
                 UiCommonR.drawable.round_close_24,
-                context.getString(UtilR.string.cancel),
+                context.getString(LocaleR.string.cancel),
                 AppUpdaterReceiver.cancelUpdateDownloadPendingBroadcast(context),
             )
             show()
@@ -52,10 +52,16 @@ class AppUpdateNotificationBuilder(
 
     fun promptInstall(uri: Uri) {
         val installIntent = installApkActivity(uri)
-        val installPendingIntent = installApkPendingActivity(context, uri)
+        val intent = installApkActivity(uri)
+        val installPendingIntent = PendingIntent.getActivity(
+            /* context = */ context,
+            /* requestCode = */ 0,
+            /* intent = */ intent,
+            /* flags = */ PendingIntent.FLAG_IMMUTABLE
+        )
 
         with(notificationBuilder) {
-            setContentText(context.getString(UtilR.string.download_completed))
+            setContentText(context.getString(LocaleR.string.download_completed))
             setSmallIcon(android.R.drawable.stat_sys_download_done)
             setOnlyAlertOnce(false)
             setProgress(0, 0, false)
@@ -65,12 +71,12 @@ class AppUpdateNotificationBuilder(
             clearActions()
             addAction(
                 R.drawable.round_system_update_alt_24,
-                context.getString(UtilR.string.install),
+                context.getString(LocaleR.string.install),
                 installPendingIntent,
             )
             addAction(
                 UiCommonR.drawable.round_close_24,
-                context.getString(UtilR.string.cancel),
+                context.getString(LocaleR.string.cancel),
                 AppUpdaterReceiver.dismissNotification(context)
             )
             show(APP_UPDATE_PROMPT_NOTIFICATION_ID)
@@ -80,7 +86,7 @@ class AppUpdateNotificationBuilder(
 
     fun onDownloadError(url: String) {
         with(notificationBuilder) {
-            setContentText(context.getString(UtilR.string.error_downloading_update))
+            setContentText(context.getString(LocaleR.string.error_downloading_update))
             setSmallIcon(R.drawable.round_error_outline_24)
             setOnlyAlertOnce(false)
             setProgress(0, 0, false)
@@ -88,12 +94,12 @@ class AppUpdateNotificationBuilder(
             clearActions()
             addAction(
                 R.drawable.round_refresh_24,
-                context.getString(UtilR.string.retry),
+                context.getString(LocaleR.string.retry),
                 AppUpdaterService.restartDownload(context, url),
             )
             addAction(
                 UiCommonR.drawable.round_close_24,
-                context.getString(UtilR.string.cancel),
+                context.getString(LocaleR.string.cancel),
                 AppUpdaterReceiver.dismissNotification(context),
             )
             show()

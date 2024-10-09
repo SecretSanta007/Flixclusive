@@ -19,12 +19,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.minimumInteractiveComponentSize
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -44,8 +44,8 @@ import com.flixclusive.AppNavigationItem
 import com.flixclusive.core.ui.common.util.onMediumEmphasis
 import com.flixclusive.mobile.MobileNavGraphs
 import com.ramcosta.composedestinations.spec.NavGraphSpec
+import com.flixclusive.core.locale.R as LocaleR
 import com.flixclusive.core.ui.common.R as UiCommonR
-import com.flixclusive.core.util.R as UtilR
 
 @Composable
 internal fun BottomBar(
@@ -132,7 +132,7 @@ private fun CustomNavItem(
                     .height(28.dp)
                     .indication(
                         interactionSource = interactionSource,
-                        indication = rememberRipple()
+                        indication = ripple()
                     )
             )
 
@@ -167,24 +167,24 @@ private val mobileNavigationItems = listOf(
         screen = MobileNavGraphs.home,
         iconSelected = UiCommonR.drawable.home,
         iconUnselected = UiCommonR.drawable.home_outlined,
-        label = UtilR.string.home
+        label = LocaleR.string.home
     ),
     AppNavigationItem(
         screen = MobileNavGraphs.search,
         iconSelected = UiCommonR.drawable.search,
         iconUnselected = UiCommonR.drawable.search_outlined,
-        label = UtilR.string.search
+        label = LocaleR.string.search
     ),
     AppNavigationItem(
         screen = MobileNavGraphs.providers,
         iconSelected = UiCommonR.drawable.provider_logo_fill,
         iconUnselected = UiCommonR.drawable.provider_logo,
-        label = UtilR.string.providers
+        label = LocaleR.string.providers
     ),
     AppNavigationItem(
         screen = MobileNavGraphs.preferences,
         iconSelected = UiCommonR.drawable.settings_filled,
         iconUnselected = UiCommonR.drawable.settings,
-        label = UtilR.string.preferences
+        label = LocaleR.string.preferences
     ),
 )

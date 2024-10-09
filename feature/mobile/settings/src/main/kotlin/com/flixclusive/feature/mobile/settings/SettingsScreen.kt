@@ -58,13 +58,13 @@ import com.flixclusive.feature.mobile.settings.util.AppSettingsHelper.LocalAppSe
 import com.flixclusive.feature.mobile.settings.util.ProviderSettingsHelper.LocalAppSettingsProvider
 import com.flixclusive.feature.mobile.settings.util.ProviderSettingsHelper.LocalAppSettingsProviderChanger
 import com.ramcosta.composedestinations.annotation.Destination
-import com.flixclusive.core.util.R as UtilR
+import com.flixclusive.core.locale.R as LocaleR
 
 internal val settingItemShape = RoundedCornerShape(20.dp)
 
 @Destination
 @Composable
-fun SettingsScreen(
+internal fun SettingsScreen(
     navigator: GoBackAction,
 ) {
     val context = LocalContext.current
@@ -120,7 +120,7 @@ fun SettingsScreen(
                     exit = slideOutVertically(targetOffsetY = { -it }) + fadeOut()
                 ) {
                     CommonTopBar(
-                        headerTitle = stringResource(id = UtilR.string.settings),
+                        headerTitle = stringResource(id = LocaleR.string.settings),
                         onNavigationIconClick = navigator::goBack
                     )
                 }

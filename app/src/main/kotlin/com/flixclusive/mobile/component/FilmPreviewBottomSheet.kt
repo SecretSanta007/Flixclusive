@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Star
-import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -26,6 +25,7 @@ import androidx.compose.material3.SheetState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.minimumInteractiveComponentSize
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -45,16 +45,16 @@ import androidx.constraintlayout.compose.Dimension
 import com.flixclusive.R
 import com.flixclusive.core.theme.starColor
 import com.flixclusive.core.ui.common.FilmCover
+import com.flixclusive.core.ui.common.util.formatRating
 import com.flixclusive.core.ui.common.util.onMediumEmphasis
-import com.flixclusive.core.util.film.formatRating
-import com.flixclusive.model.tmdb.Film
+import com.flixclusive.model.film.Film
+import com.flixclusive.core.locale.R as LocaleR
 import com.flixclusive.core.ui.common.R as UiCommonR
 import com.flixclusive.core.ui.mobile.R as UiMobileR
-import com.flixclusive.core.util.R as UtilR
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FilmPreviewBottomSheet(
+internal fun FilmPreviewBottomSheet(
     film: Film,
     sheetState: SheetState,
     isInWatchlist: () -> Boolean,
@@ -138,7 +138,7 @@ fun FilmPreviewBottomSheet(
                 ) {
                     Icon(
                         imageVector = Icons.Rounded.Star,
-                        contentDescription = stringResource(UtilR.string.rating_icon),
+                        contentDescription = stringResource(LocaleR.string.rating_icon),
                         modifier = Modifier.scale(0.6F),
                         tint = starColor,
                     )
@@ -170,27 +170,27 @@ fun FilmPreviewBottomSheet(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButtonWithLabel(
-                    labelId = UtilR.string.play,
+                    labelId = LocaleR.string.play,
                     onClick = onPlayClick
                 ) {
                     Icon(
                         painter = painterResource(UiCommonR.drawable.play),
-                        contentDescription = stringResource(UtilR.string.play_button),
+                        contentDescription = stringResource(LocaleR.string.play_button),
                         modifier = Modifier.size(33.dp)
                     )
                 }
 
                 val contentDescription = if (isInWatchlist()) {
-                    UtilR.string.added_to_watchlist_button
-                } else UtilR.string.add_to_watchlist_button
+                    LocaleR.string.added_to_watchlist_button
+                } else LocaleR.string.add_to_watchlist_button
 
                 val icon = if (isInWatchlist()) {
                     R.drawable.added_bookmark
                 } else R.drawable.add_bookmark
 
                 val label = if (isInWatchlist()) {
-                    UtilR.string.watchlisted
-                } else UtilR.string.watchlist
+                    LocaleR.string.watchlisted
+                } else LocaleR.string.watchlist
 
                 IconButtonWithLabel(
                     labelId = label,
@@ -205,12 +205,12 @@ fun FilmPreviewBottomSheet(
 
                 if (isInWatchHistory()) {
                     IconButtonWithLabel(
-                        labelId = UtilR.string.remove,
+                        labelId = LocaleR.string.remove,
                         onClick = onWatchHistoryButtonClick
                     ) {
                         Icon(
                             painter = painterResource(UiCommonR.drawable.delete),
-                            contentDescription = stringResource(UtilR.string.remove),
+                            contentDescription = stringResource(LocaleR.string.remove),
                             modifier = Modifier.size(33.dp)
                         )
                     }
@@ -238,14 +238,14 @@ fun FilmPreviewBottomSheet(
             ) {
                 Icon(
                     painter = painterResource(R.drawable.information),
-                    contentDescription = stringResource(UtilR.string.more_details),
+                    contentDescription = stringResource(LocaleR.string.more_details),
                     modifier = Modifier
                         .scale(0.7F)
                         .padding(start = 15.dp),
                 )
 
                 Text(
-                    text = stringResource(UtilR.string.more_details),
+                    text = stringResource(LocaleR.string.more_details),
                     style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier
                         .padding(vertical = 15.dp)
@@ -254,7 +254,7 @@ fun FilmPreviewBottomSheet(
 
                 Icon(
                     painter = painterResource(UiMobileR.drawable.right_arrow),
-                    contentDescription = stringResource(UtilR.string.navigate_to_film),
+                    contentDescription = stringResource(LocaleR.string.navigate_to_film),
                     modifier = Modifier
                         .scale(0.7F)
                         .padding(end = 15.dp),
@@ -266,7 +266,7 @@ fun FilmPreviewBottomSheet(
 }
 
 @Composable
-fun IconButtonWithLabel(
+internal fun IconButtonWithLabel(
     @StringRes labelId: Int,
     onClick: () -> Unit,
     size: Dp = 65.dp,
@@ -284,7 +284,7 @@ fun IconButtonWithLabel(
                 enabled = enabled,
                 role = Role.Button,
                 interactionSource = interactionSource,
-                indication = rememberRipple(
+                indication = ripple(
                     bounded = false,
                     radius = size / 2
                 )

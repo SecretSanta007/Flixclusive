@@ -12,7 +12,7 @@ import com.flixclusive.core.datastore.AppSettingsManager
 import com.flixclusive.core.ui.player.BasePlayerViewModel
 import com.flixclusive.core.ui.player.PlayerScreenNavArgs
 import com.flixclusive.core.ui.player.util.PlayerCacheManager
-import com.flixclusive.core.util.common.ui.UiText
+import com.flixclusive.core.locale.UiText
 import com.flixclusive.data.watch_history.WatchHistoryRepository
 import com.flixclusive.domain.database.WatchTimeUpdaterUseCase
 import com.flixclusive.domain.provider.GetMediaLinksUseCase
@@ -37,7 +37,7 @@ internal fun playerScreenViewModel(args: PlayerScreenNavArgs): PlayerScreenViewM
 }
 
 
-class PlayerScreenViewModel @AssistedInject constructor(
+internal class PlayerScreenViewModel @AssistedInject constructor(
     @Assisted args: PlayerScreenNavArgs,
     private val appSettingsManager: AppSettingsManager,
     client: OkHttpClient,

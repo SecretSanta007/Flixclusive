@@ -34,9 +34,8 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.flixclusive.core.theme.FlixclusiveTheme
-import com.flixclusive.core.ui.common.navigation.ProviderInfoScreenNavArgs
-import com.flixclusive.core.ui.common.navigation.ProviderTestNavigator
-import com.flixclusive.core.ui.common.navigation.RepositorySearchScreenNavigator
+import com.flixclusive.core.ui.common.navigation.navargs.ProviderInfoScreenNavArgs
+import com.flixclusive.core.ui.common.navigation.navigator.ProviderInfoNavigator
 import com.flixclusive.core.ui.common.util.DummyDataForPreview
 import com.flixclusive.core.ui.common.util.showToast
 import com.flixclusive.core.ui.mobile.component.dialog.UnsafeInstallAlertDialog
@@ -50,10 +49,10 @@ import com.flixclusive.feature.mobile.provider.info.component.ProviderInfoHeader
 import com.flixclusive.feature.mobile.provider.info.component.ProviderInfoTopBar
 import com.flixclusive.feature.mobile.provider.info.component.author.AuthorsList
 import com.flixclusive.feature.mobile.provider.info.component.subdetails.SubDetailsList
-import com.flixclusive.gradle.entities.ProviderData
-import com.flixclusive.gradle.entities.Repository
+import com.flixclusive.model.provider.ProviderData
+import com.flixclusive.model.provider.Repository
 import com.ramcosta.composedestinations.annotation.Destination
-import com.flixclusive.core.util.R as UtilR
+import com.flixclusive.core.locale.R as LocaleR
 
 internal val HORIZONTAL_PADDING = 20.dp
 internal const val LABEL_SIZE = 15
@@ -61,16 +60,11 @@ internal val LABEL_SIZE_IN_SP = LABEL_SIZE.sp
 internal val LABEL_SIZE_IN_DP = LABEL_SIZE.dp
 internal val SUB_LABEL_SIZE = 13.sp
 
-interface ProviderInfoNavigator : RepositorySearchScreenNavigator, ProviderTestNavigator {
-    fun seeWhatsNew(providerData: ProviderData)
-    fun openProviderSettings(providerData: ProviderData)
-}
-
 @Destination(
     navArgsDelegate = ProviderInfoScreenNavArgs::class
 )
 @Composable
-fun ProviderInfoScreen(
+internal fun ProviderInfoScreen(
     navigator: ProviderInfoNavigator,
     args: ProviderInfoScreenNavArgs
 ) {
@@ -90,8 +84,8 @@ fun ProviderInfoScreen(
 
     val webNavigationItems = remember {
         listOf(
-            UtilR.string.issue_a_bug to viewModel.providerData.repositoryUrl?.getNewIssueUrl(),
-            UtilR.string.browse_repository to viewModel.providerData.repositoryUrl,
+            LocaleR.string.issue_a_bug to viewModel.providerData.repositoryUrl?.getNewIssueUrl(),
+            LocaleR.string.browse_repository to viewModel.providerData.repositoryUrl,
         )
     }
 
@@ -188,7 +182,7 @@ fun ProviderInfoScreen(
                 if (viewModel.providerData.changelog != null) {
                     item {
                         NavigationItem(
-                            label = stringResource(id = UtilR.string.whats_new),
+                            label = stringResource(id = LocaleR.string.whats_new),
                             onClick = {
                                 navigator.seeWhatsNew(providerData = viewModel.providerData)
                             }
@@ -216,7 +210,7 @@ fun ProviderInfoScreen(
                         onClick = {
                             if (url != null) uriHandler.openUri(url)
                             else {
-                                context.showToast(context.getString(UtilR.string.null_repository_url_error))
+                                context.showToast(context.getString(LocaleR.string.null_repository_url_error))
                             }
                         }
                     )

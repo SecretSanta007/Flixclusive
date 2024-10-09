@@ -12,6 +12,7 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
         maven { url = uri("https://jitpack.io") }
+        mavenLocal()
     }
 }
 
@@ -62,11 +63,9 @@ include(":feature:tv:search")
 include(":model:configuration")
 include(":model:database")
 include(":model:datastore")
-include(":model:provider")
-include(":model:tmdb")
 
 include(":domain:database")
-include(":domain:category")
+include(":domain:catalog")
 include(":domain:home")
 include(":domain:provider")
 include(":domain:search")
@@ -82,15 +81,13 @@ include(":data:user")
 include(":data:watch_history")
 include(":data:watchlist")
 
-include(":provider")
-
 include(":core:database")
 include(":core:datastore")
+include(":core:locale")
 include(":core:network")
 include(":core:theme")
 include(":core:ui:common")
 include(":core:ui:mobile")
 include(":core:ui:tv")
-include(":core:util")
 
 include(":service")

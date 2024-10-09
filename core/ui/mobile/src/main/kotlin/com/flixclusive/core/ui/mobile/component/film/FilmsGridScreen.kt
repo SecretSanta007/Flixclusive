@@ -45,19 +45,19 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.flixclusive.core.ui.common.util.PagingState
 import com.flixclusive.core.ui.mobile.R
 import com.flixclusive.core.ui.mobile.component.LARGE_ERROR
 import com.flixclusive.core.ui.mobile.component.RetryButton
 import com.flixclusive.core.ui.mobile.component.SMALL_ERROR
 import com.flixclusive.core.ui.mobile.util.isAtTop
 import com.flixclusive.core.ui.mobile.util.isScrollingUp
-import com.flixclusive.core.util.common.ui.PagingState
 import com.flixclusive.core.util.exception.safeCall
-import com.flixclusive.core.util.film.FilmType
-import com.flixclusive.model.tmdb.Film
+import com.flixclusive.model.film.Film
+import com.flixclusive.model.film.util.FilmType
 import kotlinx.coroutines.launch
+import com.flixclusive.core.locale.R as LocaleR
 import com.flixclusive.core.ui.common.R as UiCommonR
-import com.flixclusive.core.util.R as UtilR
 
 @Composable
 fun FilmsGridScreen(
@@ -166,7 +166,7 @@ fun FilmsGridScreen(
                         .height(errorHeight)
                         .fillMaxWidth(),
                     shouldShowError = pagingState == PagingState.ERROR,
-                    error = stringResource(id = UtilR.string.pagination_error_message),
+                    error = stringResource(id = LocaleR.string.pagination_error_message),
                     onRetry = onRetry
                 )
             }
@@ -203,7 +203,7 @@ private fun FilmsGridHeader(
                 IconButton(onClick = onNavigationIconClick) {
                     Icon(
                         painter = painterResource(UiCommonR.drawable.left_arrow),
-                        contentDescription = stringResource(UtilR.string.navigate_up)
+                        contentDescription = stringResource(LocaleR.string.navigate_up)
                     )
                 }
             }
@@ -228,7 +228,7 @@ private fun FilmsGridHeader(
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.filter),
-                        contentDescription = stringResource(UtilR.string.filter_button)
+                        contentDescription = stringResource(LocaleR.string.filter_button)
                     )
                 }
             }

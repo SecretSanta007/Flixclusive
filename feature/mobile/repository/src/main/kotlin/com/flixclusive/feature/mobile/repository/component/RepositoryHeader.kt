@@ -23,13 +23,13 @@ import androidx.compose.ui.unit.sp
 import com.flixclusive.core.theme.FlixclusiveTheme
 import com.flixclusive.core.ui.mobile.component.ImageWithSmallPlaceholder
 import com.flixclusive.core.ui.mobile.component.provider.ButtonWithCircularProgressIndicator
-import com.flixclusive.core.util.common.ui.UiText
-import com.flixclusive.gradle.entities.Repository
+import com.flixclusive.core.locale.UiText
+import com.flixclusive.model.provider.Repository
 import com.flixclusive.core.ui.common.R as UiCommonR
-import com.flixclusive.core.util.R as UtilR
+import com.flixclusive.core.locale.R as LocaleR
 
 @Composable
-fun RepositoryHeader(
+internal fun RepositoryHeader(
     repository: Repository,
     toggleSnackbar: (UiText) -> Unit,
 ) {
@@ -51,7 +51,7 @@ fun RepositoryHeader(
                 placeholderModifier = Modifier.size(70.dp),
                 urlImage = if (repository.url.contains("github")) "https://github.com/${repository.owner}.png" else null,
                 placeholderId = UiCommonR.drawable.repository,
-                contentDescId = UtilR.string.owner_avatar_content_desc
+                contentDescId = LocaleR.string.owner_avatar_content_desc
             )
 
             Column(
@@ -88,7 +88,7 @@ fun RepositoryHeader(
             ButtonWithCircularProgressIndicator(
                 onClick = { uriHandler.openUri(repository.url) },
                 iconId = UiCommonR.drawable.web_browser,
-                label = stringResource(id = UtilR.string.open_web_icon),
+                label = stringResource(id = LocaleR.string.open_web_icon),
                 modifier = Modifier
                     .weight(1F)
             )
@@ -96,10 +96,10 @@ fun RepositoryHeader(
             ButtonWithCircularProgressIndicator(
                 onClick = {
                     clipboardManager.setText(AnnotatedString(repository.url))
-                    toggleSnackbar(UiText.StringResource(UtilR.string.copied_link))
+                    toggleSnackbar(UiText.StringResource(LocaleR.string.copied_link))
                 },
                 iconId = UiCommonR.drawable.round_content_copy_24,
-                label = stringResource(id = UtilR.string.copy_link),
+                label = stringResource(id = LocaleR.string.copy_link),
                 modifier = Modifier
                     .weight(1F)
             )
@@ -117,7 +117,7 @@ private fun RepositoryHeaderPreview() {
                 repository = Repository(
                     "rhenwinch",
                     "Flixclusive plugins-templates",
-                    "https://github.com/rhenwinch/providers",
+                    "https://github.com/flixclusiveorg/providers",
                     ""
                 ),
                 toggleSnackbar = {}

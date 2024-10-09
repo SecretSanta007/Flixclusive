@@ -37,7 +37,9 @@ import androidx.tv.material3.ExperimentalTvMaterial3Api
 import androidx.tv.material3.Icon
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
-import com.flixclusive.core.ui.common.navigation.CommonScreenNavigator
+import com.flixclusive.core.network.util.Resource
+import com.flixclusive.core.ui.common.navigation.navigator.CommonScreenNavigator
+import com.flixclusive.core.ui.common.util.PagingState
 import com.flixclusive.core.ui.common.util.ifElse
 import com.flixclusive.core.ui.tv.component.FilmCard
 import com.flixclusive.core.ui.tv.util.LabelStartPadding
@@ -51,10 +53,7 @@ import com.flixclusive.core.ui.tv.util.shouldPaginate
 import com.flixclusive.core.ui.tv.util.useLocalCurrentRoute
 import com.flixclusive.core.ui.tv.util.useLocalDirectionalFocusRequester
 import com.flixclusive.core.ui.tv.util.useLocalLastFocusedItemPerDestination
-import com.flixclusive.core.util.common.resource.Resource
-import com.flixclusive.core.util.common.ui.PagingState
 import com.flixclusive.core.util.exception.safeCall
-import com.flixclusive.core.util.film.SearchFilter
 import com.flixclusive.feature.tv.search.component.FilterBlock
 import com.flixclusive.feature.tv.search.component.KEYBOARD_FOCUS_KEY_FORMAT
 import com.flixclusive.feature.tv.search.component.SearchCustomKeyboard
@@ -67,11 +66,11 @@ import com.flixclusive.core.ui.common.R as UiCommonR
 @OptIn(ExperimentalTvMaterial3Api::class)
 @Destination
 @Composable
-fun SearchScreen(
+internal fun SearchScreen(
     navigator: CommonScreenNavigator
 ) {
     val viewModel: SearchScreenViewModel = hiltViewModel()
-    val categories by viewModel.categories.collectAsStateWithLifecycle()
+    val categories by viewModel.catalogs.collectAsStateWithLifecycle()
 
 
     var lastSearchedQuery by remember { mutableStateOf(viewModel.searchQuery) }
@@ -103,7 +102,7 @@ fun SearchScreen(
         lastSearchedQuery = viewModel.searchQuery
     }
 
-    LaunchedEffect(viewModel.selectedCategory?.url) {
+    LaunchedEffect(viewModel.selectedCatalog?.url) {
         safeCall { listState.scrollToItem(0) }
         viewModel.onSearch()
     }
@@ -161,8 +160,8 @@ fun SearchScreen(
                             itemsIndexed(categories.data ?: emptyList()) { i, item ->
                                 SuggestionBlock(
                                     suggestion = item.name,
-                                    isSelected = item.url == viewModel.selectedCategory?.url,
-                                    onClick = { viewModel.onCategoryChange(item) },
+                                    isSelected = item.url == viewModel.selectedCatalog?.url,
+                                    onClick = { viewModel.onCatalogChange(item) },
                                     modifier = Modifier
                                         .ifElse(
                                             condition = i == 0,

@@ -9,4 +9,5 @@ android {
 
 dependencies {
     api(libs.gson)
+    implementation(libs.stubs.model.provider)
 }

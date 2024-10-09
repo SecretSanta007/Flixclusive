@@ -25,8 +25,10 @@ import com.flixclusive.core.theme.FlixclusiveTheme
 import com.flixclusive.core.ui.common.util.DummyDataForPreview.getDummyProviderData
 import com.flixclusive.core.ui.mobile.component.ImageWithSmallPlaceholder
 import com.flixclusive.domain.provider.util.extractGithubInfoFromLink
-import com.flixclusive.gradle.entities.ProviderData
+import com.flixclusive.model.provider.ProviderData
 import com.flixclusive.core.ui.common.R as UiCommonR
+import com.flixclusive.core.locale.R as LocaleR
+
 
 @Composable
 internal fun ProviderInfoHeader(
@@ -48,7 +50,7 @@ internal fun ProviderInfoHeader(
             placeholderModifier = Modifier.size(38.dp),
             urlImage = providerData.iconUrl,
             placeholderId = UiCommonR.drawable.provider_logo,
-            contentDescId = com.flixclusive.core.util.R.string.provider_icon_content_desc,
+            contentDescId = LocaleR.string.provider_icon_content_desc,
             shape = MaterialTheme.shapes.small,
         )
 

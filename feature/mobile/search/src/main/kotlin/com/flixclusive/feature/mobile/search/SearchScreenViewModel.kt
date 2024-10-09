@@ -2,7 +2,7 @@ package com.flixclusive.feature.mobile.search
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.flixclusive.core.util.common.resource.Resource
+import com.flixclusive.core.network.util.Resource
 import com.flixclusive.data.util.InternetMonitor
 import com.flixclusive.domain.search.GetSearchRecommendedCardsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class SearchScreenViewModel @Inject constructor(
+internal class SearchScreenViewModel @Inject constructor(
     private val getSearchRecommendedCardsUseCase: GetSearchRecommendedCardsUseCase,
     internetMonitor: InternetMonitor,
 ) : ViewModel() {

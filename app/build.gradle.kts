@@ -11,7 +11,7 @@ plugins {
 
 // Version
 val versionMajor = 2
-val versionMinor = 1
+val versionMinor = 2
 val versionPatch = 0
 val versionBuild = 0
 val applicationName: String = libs.versions.applicationName.get()
@@ -104,7 +104,7 @@ dependencies {
     implementation(projects.data.watchlist)
     implementation(projects.domain.provider)
     implementation(projects.domain.tmdb)
-    implementation(projects.model.provider)
+    implementation(libs.stubs.model.provider)
 
     implementation(projects.service)
 
@@ -120,5 +120,4 @@ dependencies {
     implementation(libs.core.splashscreen)
     implementation(libs.hilt.navigation)
     implementation(libs.lifecycle.runtimeCompose)
-    implementation(libs.material)
 }

@@ -27,15 +27,15 @@ import com.flixclusive.core.ui.tv.util.focusOnMount
 import com.flixclusive.core.ui.tv.util.getLocalDrawerWidth
 import com.flixclusive.core.util.exception.safeCall
 import com.flixclusive.model.database.WatchHistoryItem
-import com.flixclusive.model.tmdb.Film
+import com.flixclusive.model.film.Film
 import kotlinx.coroutines.launch
-import com.flixclusive.core.util.R as UtilR
+import com.flixclusive.core.locale.R as LocaleR
 
 internal const val HOME_WATCHED_FILMS_FOCUS_KEY_FORMAT = "watchedRow=%d, watchedColumn=%d"
 
 @OptIn(ExperimentalTvMaterial3Api::class)
 @Composable
-fun HomeContinueWatchingRow(
+internal fun HomeContinueWatchingRow(
     modifier: Modifier = Modifier,
     items: List<WatchHistoryItem>,
     onPlayClick: (Film) -> Unit,
@@ -56,7 +56,7 @@ fun HomeContinueWatchingRow(
             .heightIn(min = FilmPadding.bottom + 18.dp + FilmCardHeight)
     ) {
         Text(
-            text = stringResource(id = UtilR.string.continue_watching),
+            text = stringResource(id = LocaleR.string.continue_watching),
             style = MaterialTheme.typography.headlineLarge.copy(
                 fontWeight = FontWeight.Black,
                 fontSize = 40.sp

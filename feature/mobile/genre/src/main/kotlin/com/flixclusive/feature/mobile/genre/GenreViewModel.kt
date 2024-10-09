@@ -9,13 +9,14 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.flixclusive.core.datastore.AppSettingsManager
-import com.flixclusive.core.util.common.resource.Resource
-import com.flixclusive.core.util.common.ui.PagingState
-import com.flixclusive.core.util.film.FilmType
-import com.flixclusive.core.util.film.FilmType.Companion.toFilmType
+import com.flixclusive.core.network.util.Resource
+import com.flixclusive.core.ui.common.navigation.navargs.GenreScreenNavArgs
+import com.flixclusive.core.ui.common.util.PagingState
 import com.flixclusive.data.tmdb.SortOptions
 import com.flixclusive.data.tmdb.TMDBRepository
-import com.flixclusive.model.tmdb.FilmSearchItem
+import com.flixclusive.model.film.FilmSearchItem
+import com.flixclusive.model.film.util.FilmType
+import com.flixclusive.model.film.util.FilmType.Companion.toFilmType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
@@ -23,7 +24,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class GenreViewModel @Inject constructor(
+internal class GenreViewModel @Inject constructor(
     private val tmdbRepository: TMDBRepository,
     savedStateHandle: SavedStateHandle,
     appSettingsManager: AppSettingsManager,

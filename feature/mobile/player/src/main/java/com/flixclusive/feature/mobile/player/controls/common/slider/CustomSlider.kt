@@ -27,11 +27,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.requiredSizeIn
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.progressSemantics
-import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RangeSlider
 import androidx.compose.material3.minimumInteractiveComponentSize
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
@@ -115,7 +115,7 @@ import kotlin.math.roundToInt
  * [Interaction]s and customize the appearance / behavior of this slider in different states.
  */
 @Composable
-fun CustomSlider(
+internal fun CustomSlider(
     value: Float,
     onValueChange: (Float) -> Unit,
     modifier: Modifier = Modifier,
@@ -198,7 +198,7 @@ fun CustomSlider(
  */
 @Composable
 @ExperimentalMaterial3Api
-fun CustomSlider(
+internal fun CustomSlider(
     value: Float,
     onValueChange: (Float) -> Unit,
     modifier: Modifier = Modifier,
@@ -405,7 +405,7 @@ private fun SliderImpl(
  * Object to hold defaults used by [CustomSlider]
  */
 @Stable
-object CustomSliderDefaults {
+internal object CustomSliderDefaults {
 
     /**
      * Creates a [CustomSliderColors] that represents the different colors used in parts of the
@@ -528,7 +528,7 @@ object CustomSliderDefaults {
                     .size(thumbSize)
                     .indication(
                         interactionSource = interactionSource,
-                        indication = rememberRipple(
+                        indication = ripple(
                             bounded = false,
                             radius = SliderTokens.StateLayerSize / 2
                         )
@@ -559,10 +559,11 @@ object CustomSliderDefaults {
         modifier: Modifier = Modifier,
         colors: CustomSliderColors = colors(),
         enabled: Boolean = true,
+        gradient: Boolean = true,
     ) {
         val inactiveTrackColor = colors.trackColor(enabled, active = false)
         val activeTrackColor = colors.trackColor(enabled, active = true)
-        val gradientedColor = if(enabled) {
+        val gradientedColor = if(gradient) {
             Brush.linearGradient(
                 colors = listOf(
                     MaterialTheme.colorScheme.primary,
@@ -763,7 +764,7 @@ private fun Modifier.sliderTapModifier(
     })
 
 @Immutable
-class CustomSliderColors internal constructor(
+internal class CustomSliderColors internal constructor(
     private val thumbColor: Color,
     private val activeTrackColor: Color,
     private val activeTickColor: Color,
@@ -883,7 +884,7 @@ private enum class SliderComponents {
  * and fractional positions where the discrete ticks should be drawn on the track.
  */
 @Stable
-class CustomSliderPositions(
+internal class CustomSliderPositions(
     initialActiveRange: ClosedFloatingPointRange<Float> = 0f..1f,
     initialTickFractions: FloatArray = floatArrayOf()
 ) {

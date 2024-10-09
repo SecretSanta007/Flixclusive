@@ -8,13 +8,12 @@ import androidx.compose.ui.util.fastAny
 import androidx.compose.ui.util.fastFilter
 import androidx.lifecycle.ViewModel
 import com.flixclusive.domain.provider.test.TestProviderUseCase
-import com.flixclusive.gradle.entities.ProviderData
-import com.flixclusive.model.provider.id
+import com.flixclusive.model.provider.ProviderData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class ProviderTestScreenViewModel @Inject constructor(
+internal class ProviderTestScreenViewModel @Inject constructor(
     val testProviderUseCase: TestProviderUseCase
 ) : ViewModel() {
     var showRepetitiveTestWarning by mutableStateOf(false)

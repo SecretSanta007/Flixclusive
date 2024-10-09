@@ -4,7 +4,7 @@ import com.flixclusive.core.network.di.TestRetrofitModule.getMockTMDBApiService
 import com.flixclusive.data.configuration.di.test.TestAppConfigurationModule.getMockAppConfigurationManager
 import com.flixclusive.data.tmdb.DefaultTMDBRepository
 import com.flixclusive.data.tmdb.TMDBRepository
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import okhttp3.OkHttpClient
 
 object TestTmdbDataModule {
     fun getMockTMDBRepository(): TMDBRepository {
@@ -13,8 +13,8 @@ object TestTmdbDataModule {
 
         return DefaultTMDBRepository(
             tmdbApiService = apiService,
-            configurationProvider = appConfigurationManager,
-            ioDispatcher = UnconfinedTestDispatcher()
+            okHttpClient = OkHttpClient(),
+            configurationProvider = appConfigurationManager
         )
     }
 }

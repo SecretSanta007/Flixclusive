@@ -30,7 +30,7 @@ import androidx.tv.foundation.lazy.list.TvLazyColumn
 import androidx.tv.foundation.lazy.list.rememberTvLazyListState
 import androidx.tv.material3.ExperimentalTvMaterial3Api
 import androidx.tv.material3.MaterialTheme
-import com.flixclusive.core.ui.common.navigation.CommonScreenNavigator
+import com.flixclusive.core.ui.common.navigation.navigator.HomeScreenTvNavigator
 import com.flixclusive.core.ui.common.util.fadingEdge
 import com.flixclusive.core.ui.home.HomeScreenViewModel
 import com.flixclusive.core.ui.tv.component.NonFocusableSpacer
@@ -46,19 +46,15 @@ import com.flixclusive.feature.tv.home.component.util.LocalImmersiveBackgroundCo
 import com.flixclusive.feature.tv.home.component.util.useLocalImmersiveBackgroundColor
 import com.flixclusive.feature.tv.home.component.watched.HOME_WATCHED_FILMS_FOCUS_KEY_FORMAT
 import com.flixclusive.feature.tv.home.component.watched.HomeContinueWatchingRow
-import com.flixclusive.model.tmdb.Film
+import com.flixclusive.model.film.Film
 import com.ramcosta.composedestinations.annotation.Destination
 import kotlinx.coroutines.delay
 import java.util.Locale
 
-interface HomeScreenTvNavigator : CommonScreenNavigator {
-    fun openPlayerScreen(film: Film)
-}
-
 @OptIn(ExperimentalTvMaterial3Api::class)
 @Destination
 @Composable
-fun HomeScreen(
+internal fun HomeScreen(
     navigator: HomeScreenTvNavigator
 ) {
     val viewModel: HomeScreenViewModel = hiltViewModel()
@@ -70,7 +66,7 @@ fun HomeScreen(
     val uiState by viewModel.state.collectAsStateWithLifecycle()
 
     val headerItem = uiState.headerItem
-    val homeCategories = uiState.categories
+    val homeCategories = uiState.catalogs
     val homeRowItemsPagingState = uiState.rowItemsPagingState
     val homeRowItems = uiState.rowItems
     val continueWatchingList by viewModel.continueWatchingList.collectAsStateWithLifecycle()
@@ -185,7 +181,7 @@ fun HomeScreen(
 
                         LaunchedEffect(shouldStartPaginate) {
                             if(shouldStartPaginate) {
-                                viewModel.onPaginateCategories()
+                                viewModel.onPaginateCatalogs()
                             }
                         }
 
@@ -216,10 +212,10 @@ fun HomeScreen(
                                 key = { it % homeCategories.size }
                             ) { i ->
                                 val rowIndex = i % homeCategories.size
-                                val category = homeCategories[rowIndex]
+                                val catalog = homeCategories[rowIndex]
 
                                 HomeFilmsRow(
-                                    categoryItem = category,
+                                    catalogItem = catalog,
                                     paginationState = homeRowItemsPagingState[rowIndex],
                                     films = homeRowItems[rowIndex],
                                     rowIndex = i + if (continueWatchingList.isNotEmpty()) 1 else 0,
@@ -229,7 +225,7 @@ fun HomeScreen(
                                     },
                                     paginate = { page ->
                                         viewModel.onPaginateFilms(
-                                            category = category,
+                                            catalog = catalog,
                                             page = page,
                                             index = i
                                         )

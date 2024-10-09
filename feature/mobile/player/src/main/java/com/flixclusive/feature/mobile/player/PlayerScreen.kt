@@ -6,7 +6,10 @@ import android.os.Build.VERSION.SDK_INT
 import android.view.KeyEvent
 import androidx.activity.ComponentActivity
 import androidx.annotation.OptIn
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,24 +25,21 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
-import com.flixclusive.core.ui.common.navigation.GoBackAction
+import com.flixclusive.core.ui.common.navigation.navigator.PlayerScreenNavigator
 import com.flixclusive.core.ui.common.util.noIndicationClickable
 import com.flixclusive.core.ui.mobile.ListenKeyEvents
-import com.flixclusive.core.ui.mobile.component.provider.ProviderResourceStateDialog
 import com.flixclusive.core.ui.mobile.rememberPipMode
 import com.flixclusive.core.ui.mobile.util.toggleSystemBars
 import com.flixclusive.core.ui.player.PLAYER_CONTROL_VISIBILITY_TIMEOUT
@@ -55,49 +55,25 @@ import com.flixclusive.core.ui.player.util.PlayerUiUtil.ObservePlayerTime
 import com.flixclusive.core.ui.player.util.PlayerUiUtil.formatPlayerTitle
 import com.flixclusive.core.ui.player.util.updatePiPParams
 import com.flixclusive.core.util.android.getActivity
-import com.flixclusive.core.util.film.FilmType
+import com.flixclusive.domain.provider.CachedLinks
 import com.flixclusive.feature.mobile.player.controls.PlayerControls
+import com.flixclusive.feature.mobile.player.controls.dialogs.provider.ProviderResourceStateScreen
 import com.flixclusive.feature.mobile.player.util.BrightnessManager
 import com.flixclusive.feature.mobile.player.util.LocalBrightnessManager
 import com.flixclusive.feature.mobile.player.util.PlayerPipReceiver
-import com.flixclusive.model.provider.CachedLinks
-import com.flixclusive.model.provider.MediaLinkResourceState
-import com.flixclusive.model.tmdb.Film
-import com.flixclusive.model.tmdb.Movie
-import com.flixclusive.model.tmdb.TvShow
-import com.flixclusive.model.tmdb.common.tv.Episode
+import com.flixclusive.model.film.Movie
+import com.flixclusive.model.film.TvShow
+import com.flixclusive.model.film.common.tv.Episode
+import com.flixclusive.model.film.util.FilmType
 import com.ramcosta.composedestinations.annotation.Destination
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlin.random.Random
 
-interface PlayerScreenNavigator : GoBackAction {
-    /**
-     *
-     * There will be cases where the system will kill
-     * the app's process mercilessly if it's never put as an exclusion
-     * in the **ignore battery optimization list**.
-     *
-     * When the user comes back to the app after a long while,
-     * it will scrape back the old data that were saved from [SavedStateHandle].
-     *
-     * This action should trigger the `savedStateHandle` to
-     * update its values based on [PlayerScreenNavArgs] - since that is where
-     * the args are saved on.
-     *
-     * So whenever the user comes back to the app, the last episode the user
-     * was on would be re-used.
-     * */
-    fun onEpisodeChange(
-        film: Film,
-        episodeToPlay: Episode
-    )
-}
-
 @OptIn(UnstableApi::class)
 @Destination(navArgsDelegate = PlayerScreenNavArgs::class)
 @Composable
-fun PlayerScreen(
+internal fun PlayerScreen(
     navigator: PlayerScreenNavigator,
     args: PlayerScreenNavArgs,
 ) {
@@ -109,17 +85,16 @@ fun PlayerScreen(
     val brightnessManager = remember { BrightnessManager(context) }
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val dialogState by viewModel.dialogState.collectAsStateWithLifecycle()
+    val providerState by viewModel.dialogState.collectAsStateWithLifecycle()
 
     val appSettings by viewModel.appSettings.collectAsStateWithLifecycle()
     val watchHistoryItem by viewModel.watchHistoryItem.collectAsStateWithLifecycle()
 
-    val sourceData = viewModel.cachedLinks
+    val mediaData = viewModel.cachedLinks
     val providers by viewModel.providers.collectAsStateWithLifecycle(initialValue = emptyList())
     val seasonData by viewModel.season.collectAsStateWithLifecycle()
     val currentSelectedEpisode by viewModel.currentSelectedEpisode.collectAsStateWithLifecycle()
 
-    val scope = rememberCoroutineScope()
     var scrapingJob by remember { mutableStateOf<Job?>(null) }
 
     val currentPlayerTitle = remember(currentSelectedEpisode) {
@@ -186,10 +161,10 @@ fun PlayerScreen(
      *
      * */
     LaunchedEffect(Unit) {
-        if (sourceData.watchId.isEmpty() || sourceData.providerName.isEmpty()) {
+        if (mediaData.watchId.isEmpty() || mediaData.providerName.isEmpty()) {
             when(args.film) {
                 is TvShow -> onEpisodeClick(args.episodeToPlay)
-                is Movie -> viewModel.loadSourceData()
+                is Movie -> viewModel.loadMediaLinks()
                 else -> throw IllegalStateException("Invalid film instance [${args.film.filmType}]: ${args.film}")
             }
         }
@@ -311,8 +286,8 @@ fun PlayerScreen(
         ObserveNewLinksAndSubtitles(
             selectedSourceLink = uiState.selectedSourceLink,
             currentPlayerTitle = currentPlayerTitle,
-            newLinks = sourceData.streams,
-            newSubtitles = sourceData.subtitles,
+            newLinks = mediaData.streams,
+            newSubtitles = mediaData.subtitles,
             getSavedTimeForCurrentSourceData = {
                 viewModel.getSavedTimeForSourceData(currentSelectedEpisode).first
             }
@@ -326,7 +301,7 @@ fun PlayerScreen(
          * Don't show it if its locked and its buffering.
          * Show controls when buffering
          *
-         * See local function (CTRL+F): [showControls]
+         * See local function (CTRL+F): showControls
          *
          * */
         LaunchedEffect(
@@ -374,7 +349,7 @@ fun PlayerScreen(
                             = getSavedTimeForSourceData(currentSelectedEpisode)
 
                         player.initialize()
-                        sourceData.run {
+                        mediaData.run {
                             val getPossibleSourceLink = streams
                                 .getOrNull(uiState.selectedSourceLink)
                                 ?: streams.getOrNull(0)
@@ -417,7 +392,7 @@ fun PlayerScreen(
                 isDoubleTapping = isDoubleTapping,
                 isEpisodesSheetOpened = isEpisodesSheetOpened,
                 isAudiosAndSubtitlesDialogOpened = isAudiosAndSubtitlesDialogOpened,
-                servers = sourceData.streams,
+                servers = mediaData.streams,
                 isPlayerSettingsDialogOpened = isPlayerSettingsDialogOpened,
                 isServersDialogOpened = isServersDialogOpened,
                 watchHistoryItem = watchHistoryItem,
@@ -441,7 +416,7 @@ fun PlayerScreen(
                 toggleVideoTimeReverse = viewModel::toggleVideoTimeReverse,
                 showControls = { showControls(it) },
                 lockControls = { viewModel.areControlsLocked = it },
-                addSubtitle = { sourceData.subtitles.add(index = 0, element = it) },
+                addSubtitle = { mediaData.subtitles.add(index = 0, element = it) },
                 onEpisodeClick = {
                     viewModel.run {
                         updateWatchHistory(
@@ -485,36 +460,46 @@ fun PlayerScreen(
         }
     }
 
-    if (dialogState !is MediaLinkResourceState.Idle) {
-        LaunchedEffect(Unit) {
-            viewModel.player.run {
-                if (isPlaying) {
-                    pause()
-                    playWhenReady = true
+
+    AnimatedVisibility(
+        visible = !providerState.isIdle,
+        enter = fadeIn(),
+        exit = fadeOut(),
+    ) {
+        with(viewModel) {
+            DisposableEffect(Unit) {
+                if (player.isPlaying) {
+                    player.pause()
+                    player.playWhenReady = true
+                }
+
+                onDispose {
+                    scrapingJob?.cancel()
+                    scrapingJob = null
                 }
             }
-        }
 
-        Box(
-            contentAlignment = Alignment.Center
-        ) {
-            if (dialogState !is MediaLinkResourceState.Idle) {
-                ProviderResourceStateDialog(
-                    state = dialogState,
-                    onConsumeDialog = {
-                        scrapingJob?.cancel()
-                        scrapingJob = null
-                        viewModel.onConsumePlayerDialog()
+            ProviderResourceStateScreen(
+                state = providerState,
+                servers = mediaData.streams,
+                onSkipLoading = {
+                    updateWatchHistory(
+                        currentTime = player.currentPosition,
+                        duration = player.duration
+                    )
 
-                        if (viewModel.player.playWhenReady) {
-                            viewModel.player.play()
-                        }
+                    onEpisodeClick()
+                },
+                onClose = {
+                    scrapingJob?.cancel()
+                    scrapingJob = null
+                    onConsumePlayerDialog()
+
+                    if (player.playWhenReady) {
+                        player.play()
                     }
-                )
-            }
+                }
+            )
         }
-    } else {
-        scrapingJob?.cancel()
-        scrapingJob = null
     }
 }

@@ -18,6 +18,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -44,8 +45,8 @@ import com.flixclusive.core.theme.FlixclusiveTheme
 import com.flixclusive.core.ui.common.util.createTextFieldValue
 import com.flixclusive.core.ui.common.util.onMediumEmphasis
 import com.flixclusive.feature.mobile.repository.search.util.parseGithubUrl
+import com.flixclusive.core.locale.R as LocaleR
 import com.flixclusive.core.ui.common.R as UiCommonR
-import com.flixclusive.core.util.R as UtilR
 
 @Composable
 internal fun AddRepositoryBar(
@@ -58,6 +59,9 @@ internal fun AddRepositoryBar(
     val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
     val clipboardManager = LocalClipboardManager.current
+
+    val containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(3.dp)
+    val focusedContainerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(5.dp)
 
     var textFieldValue by remember {
         val text = clipboardManager.getText()
@@ -103,6 +107,9 @@ internal fun AddRepositoryBar(
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Go),
             shape = MaterialTheme.shapes.extraSmall,
             colors = TextFieldDefaults.colors(
+                focusedContainerColor = focusedContainerColor,
+                unfocusedContainerColor = containerColor,
+                errorContainerColor = containerColor,
                 disabledTextColor = Color.Transparent,
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,
@@ -110,7 +117,7 @@ internal fun AddRepositoryBar(
             ),
             placeholder = {
                 Text(
-                    text = stringResource(UtilR.string.search_repository_url_suggestion),
+                    text = stringResource(LocaleR.string.search_repository_url_suggestion),
                     style = MaterialTheme.typography.bodySmall,
                     color = LocalContentColor.current.onMediumEmphasis(),
                     overflow = TextOverflow.Ellipsis,
@@ -131,7 +138,7 @@ internal fun AddRepositoryBar(
                     ) {
                         Icon(
                             painter = painterResource(UiCommonR.drawable.outline_close_square),
-                            contentDescription = stringResource(UtilR.string.clear_text_button)
+                            contentDescription = stringResource(LocaleR.string.clear_text_button)
                         )
                     }
                 }
@@ -162,7 +169,7 @@ internal fun AddRepositoryBar(
                 .fillMaxWidth()
         ) {
             Text(
-                text = stringResource(id = UtilR.string.load_url),
+                text = stringResource(id = LocaleR.string.load_url),
                 style = MaterialTheme.typography.labelLarge.copy(
                     fontWeight = FontWeight.Black,
                     fontSize = 14.sp

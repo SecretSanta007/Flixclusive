@@ -23,10 +23,10 @@ import androidx.compose.ui.unit.sp
 import com.flixclusive.core.theme.FlixclusiveTheme
 import com.flixclusive.core.ui.common.dialog.ALERT_DIALOG_ROUNDNESS_PERCENTAGE
 import com.flixclusive.core.ui.common.dialog.CustomBaseAlertDialog
-import com.flixclusive.core.util.R as UtilR
+import com.flixclusive.core.locale.R as LocaleR
 
 @Composable
-fun RepetitiveTestNoticeDialog(
+internal fun RepetitiveTestNoticeDialog(
     onSkip: () -> Unit,
     onTestAgain: () -> Unit,
     onDismiss: () -> Unit,
@@ -58,7 +58,7 @@ fun RepetitiveTestNoticeDialog(
                         .heightIn(min = buttonMinHeight)
                 ) {
                     Text(
-                        text = stringResource(id = UtilR.string.skip),
+                        text = stringResource(id = LocaleR.string.skip),
                         style = MaterialTheme.typography.labelLarge,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier
@@ -80,7 +80,7 @@ fun RepetitiveTestNoticeDialog(
                         .heightIn(min = buttonMinHeight)
                 ) {
                     Text(
-                        text = stringResource(id = UtilR.string.re_test),
+                        text = stringResource(id = LocaleR.string.re_test),
                         style = MaterialTheme.typography.labelLarge,
                         fontWeight = FontWeight.Light
                     )
@@ -89,7 +89,7 @@ fun RepetitiveTestNoticeDialog(
         }
     ) {
         Text(
-            text = stringResource(id = UtilR.string.repetitive_test_warning_label),
+            text = stringResource(id = LocaleR.string.repetitive_test_warning_label),
             style = MaterialTheme.typography.labelLarge.copy(
                 fontWeight = FontWeight.Bold,
                 fontSize = 17.sp
@@ -101,7 +101,7 @@ fun RepetitiveTestNoticeDialog(
         )
 
         Text(
-            text = stringResource(id = UtilR.string.repetitive_test_warning_description),
+            text = stringResource(id = LocaleR.string.repetitive_test_warning_description),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurface,
             textAlign = TextAlign.Center,

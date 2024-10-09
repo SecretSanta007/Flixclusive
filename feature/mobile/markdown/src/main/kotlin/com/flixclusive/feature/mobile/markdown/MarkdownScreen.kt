@@ -34,10 +34,10 @@ import com.flixclusive.core.ui.common.COMMON_TOP_BAR_HEIGHT
 import com.flixclusive.core.ui.common.CommonTopBar
 import com.flixclusive.core.ui.common.dialog.TextAlertDialog
 import com.flixclusive.core.ui.common.navigation.GoBackAction
-import com.flixclusive.core.ui.common.navigation.MarkdownNavArgs
+import com.flixclusive.core.ui.common.navigation.navargs.MarkdownNavArgs
 import com.ramcosta.composedestinations.annotation.Destination
 import dev.jeziellago.compose.markdowntext.MarkdownText
-import com.flixclusive.core.util.R as UtilR
+import com.flixclusive.core.locale.R as LocaleR
 
 private fun isValidUrl(url: String): Boolean {
     return Patterns.WEB_URL.matcher(url).matches()
@@ -48,7 +48,7 @@ private fun isValidUrl(url: String): Boolean {
     navArgsDelegate = MarkdownNavArgs::class
 )
 @Composable
-fun MarkdownScreen(
+internal fun MarkdownScreen(
     navigator: GoBackAction,
     args: MarkdownNavArgs
 ) {
@@ -99,9 +99,9 @@ fun MarkdownScreen(
 
     if (linkToOpen != null) {
         TextAlertDialog(
-            label = stringResource(id = UtilR.string.heads_up),
-            description = stringResource(id = UtilR.string.not_trusted_url),
-            confirmButtonLabel = stringResource(id = UtilR.string.proceed),
+            label = stringResource(id = LocaleR.string.heads_up),
+            description = stringResource(id = LocaleR.string.not_trusted_url),
+            confirmButtonLabel = stringResource(id = LocaleR.string.proceed),
             onConfirm = { uriHandler.openUri(linkToOpen!!) },
             onDismiss = { linkToOpen = null }
         )

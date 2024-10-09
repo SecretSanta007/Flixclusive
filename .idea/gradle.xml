@@ -27,6 +27,7 @@
             <option value="$PROJECT_DIR$/core" />
             <option value="$PROJECT_DIR$/core/database" />
             <option value="$PROJECT_DIR$/core/datastore" />
+            <option value="$PROJECT_DIR$/core/locale" />
             <option value="$PROJECT_DIR$/core/network" />
             <option value="$PROJECT_DIR$/core/theme" />
             <option value="$PROJECT_DIR$/core/ui" />
@@ -36,7 +37,6 @@
             <option value="$PROJECT_DIR$/core/ui/mobile" />
             <option value="$PROJECT_DIR$/core/ui/player" />
             <option value="$PROJECT_DIR$/core/ui/tv" />
-            <option value="$PROJECT_DIR$/core/util" />
             <option value="$PROJECT_DIR$/data" />
             <option value="$PROJECT_DIR$/data/configuration" />
             <option value="$PROJECT_DIR$/data/network" />
@@ -47,7 +47,7 @@
             <option value="$PROJECT_DIR$/data/watch_history" />
             <option value="$PROJECT_DIR$/data/watchlist" />
             <option value="$PROJECT_DIR$/domain" />
-            <option value="$PROJECT_DIR$/domain/category" />
+            <option value="$PROJECT_DIR$/domain/catalog" />
             <option value="$PROJECT_DIR$/domain/database" />
             <option value="$PROJECT_DIR$/domain/home" />
             <option value="$PROJECT_DIR$/domain/provider" />
@@ -87,9 +87,6 @@
             <option value="$PROJECT_DIR$/model/configuration" />
             <option value="$PROJECT_DIR$/model/database" />
             <option value="$PROJECT_DIR$/model/datastore" />
-            <option value="$PROJECT_DIR$/model/provider" />
-            <option value="$PROJECT_DIR$/model/tmdb" />
-            <option value="$PROJECT_DIR$/provider" />
             <option value="$PROJECT_DIR$/service" />
           </set>
         </option>

@@ -13,6 +13,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.contentColorFor
+import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -23,11 +24,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.flixclusive.core.theme.FlixclusiveTheme
 import com.flixclusive.core.ui.common.util.DummyDataForPreview
-import com.flixclusive.gradle.entities.ProviderData
-import com.flixclusive.gradle.entities.Status
+import com.flixclusive.model.provider.ProviderData
+import com.flixclusive.model.provider.Status
 
 @Composable
 fun InstalledProviderCard(
+    modifier: Modifier = Modifier,
     providerData: ProviderData,
     enabled: Boolean,
     isDraggable: Boolean,
@@ -43,14 +45,14 @@ fun InstalledProviderCard(
         displacementOffset != null
     }
 
-    val cardColor = MaterialTheme.colorScheme.surface
     val elevation = when {
         isBeingDragged && enabled && isDraggable -> 20.dp
         else -> 3.dp
     }
+    val cardColor = MaterialTheme.colorScheme.surfaceColorAtElevation(elevation)
 
     Box(
-        modifier = Modifier
+        modifier = modifier
             .graphicsLayer { translationY = if (!isDraggable) 0F else displacementOffset ?: 0f }
             .fillMaxWidth(),
         contentAlignment = Alignment.Center
@@ -59,11 +61,9 @@ fun InstalledProviderCard(
             onClick = onClick,
             interactionSource = interactionSource,
             shape = MaterialTheme.shapes.medium,
-            elevation = CardDefaults.cardElevation(
-                defaultElevation = elevation
-            ),
+            elevation = CardDefaults.cardElevation(defaultElevation = 20.dp),
             colors = CardDefaults.cardColors(
-                containerColor = cardColor,
+                containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(elevation),
                 contentColor = contentColorFor(
                     backgroundColor = cardColor.copy(
                         if (!enabled) 0.4F else 1F

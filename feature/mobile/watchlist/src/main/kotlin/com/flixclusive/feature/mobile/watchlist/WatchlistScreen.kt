@@ -17,15 +17,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.flixclusive.core.ui.common.CommonTopBar
-import com.flixclusive.core.ui.common.navigation.CommonScreenNavigator
+import com.flixclusive.core.ui.common.navigation.navigator.CommonScreenNavigator
 import com.flixclusive.core.ui.mobile.component.film.FilmsGridScreen
-import com.flixclusive.model.tmdb.Film
+import com.flixclusive.model.film.Film
 import com.ramcosta.composedestinations.annotation.Destination
-import com.flixclusive.core.util.R as UtilR
+import com.flixclusive.core.locale.R as LocaleR
 
 @Destination
 @Composable
-fun WatchlistScreen(
+internal fun WatchlistScreen(
     navigator: CommonScreenNavigator,
     previewFilm: (Film) -> Unit,
 ) {
@@ -43,7 +43,7 @@ fun WatchlistScreen(
                 topBar = {
                     CommonTopBar(
                         modifier = Modifier.align(Alignment.TopStart),
-                        headerTitle = stringResource(id = UtilR.string.watchlist),
+                        headerTitle = stringResource(id = LocaleR.string.watchlist),
                         onNavigationIconClick = navigator::goBack
                     )
                 }
@@ -55,7 +55,7 @@ fun WatchlistScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = stringResource(UtilR.string.watchlist_empty_message),
+                        text = stringResource(LocaleR.string.watchlist_empty_message),
                         textAlign = TextAlign.Center
                     )
                 }
@@ -69,7 +69,7 @@ fun WatchlistScreen(
         ) {
             FilmsGridScreen(
                 modifier = Modifier.fillMaxSize(),
-                screenTitle = stringResource(UtilR.string.watchlist),
+                screenTitle = stringResource(LocaleR.string.watchlist),
                 films = watchlist,
                 isShowingFilmCardTitle = appSettings.isShowingFilmCardTitle,
                 onFilmClick = navigator::openFilmScreen,

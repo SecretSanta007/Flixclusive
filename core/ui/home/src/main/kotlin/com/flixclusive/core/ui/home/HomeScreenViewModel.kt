@@ -6,23 +6,20 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.flixclusive.core.datastore.AppSettingsManager
-import com.flixclusive.core.util.common.resource.Resource
+import com.flixclusive.core.network.util.Resource
 import com.flixclusive.data.util.InternetMonitor
 import com.flixclusive.data.watch_history.WatchHistoryRepository
 import com.flixclusive.domain.home.HomeItemsProviderUseCase
 import com.flixclusive.model.database.WatchHistoryItem
 import com.flixclusive.model.database.util.getNextEpisodeToWatch
-import com.flixclusive.model.tmdb.Film
-import com.flixclusive.model.tmdb.category.Category
+import com.flixclusive.model.film.Film
+import com.flixclusive.model.provider.Catalog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -98,22 +95,18 @@ class HomeScreenViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            val initializationStatus = homeItemsProviderUseCase.state.map {
-                it.status
-            }.distinctUntilChanged()
-
             connectionObserver
-                .combine(initializationStatus) { isConnected, status ->
-                    isConnected to status
-                }
-                .onEach { (isConnected, status) ->
+                .collectLatest { isConnected ->
+                    val status = homeItemsProviderUseCase.state.map {
+                        it.status
+                    }.first()
+
                     if (isConnected && status is Resource.Failure || status is Resource.Loading) {
                         initialize()
                     } else if(status is Resource.Success) {
-                        onPaginateCategories()
+                        onPaginateCatalogs()
                     }
                 }
-                .collect()
         }
     }
 
@@ -125,14 +118,14 @@ class HomeScreenViewModel @Inject constructor(
         homeItemsProviderUseCase.getFocusedFilm(film)
     }
 
-    fun onPaginateCategories() {
+    fun onPaginateCatalogs() {
         viewModelScope.launch {
-            itemsSize += homeItemsProviderUseCase.state.value.categories.size
+            itemsSize += homeItemsProviderUseCase.state.value.catalogs.size
         }
     }
 
     fun onPaginateFilms(
-        category: Category,
+        catalog: Catalog,
         page: Int,
         index: Int
     ) {
@@ -141,8 +134,8 @@ class HomeScreenViewModel @Inject constructor(
                 return
 
             paginationJobs[index] = viewModelScope.launch {
-                homeItemsProviderUseCase.getCategoryItems(
-                    category = category,
+                homeItemsProviderUseCase.getCatalogItems(
+                    catalog = catalog,
                     index = index,
                     page = page
                 )

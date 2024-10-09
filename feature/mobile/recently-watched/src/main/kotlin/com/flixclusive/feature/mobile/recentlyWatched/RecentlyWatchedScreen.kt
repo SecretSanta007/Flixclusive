@@ -17,15 +17,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.flixclusive.core.ui.common.CommonTopBar
-import com.flixclusive.core.ui.common.navigation.CommonScreenNavigator
+import com.flixclusive.core.ui.common.navigation.navigator.CommonScreenNavigator
 import com.flixclusive.core.ui.mobile.component.film.FilmsGridScreen
-import com.flixclusive.model.tmdb.Film
+import com.flixclusive.model.film.Film
 import com.ramcosta.composedestinations.annotation.Destination
-import com.flixclusive.core.util.R as UtilR
+import com.flixclusive.core.locale.R as LocaleR
 
 @Destination
 @Composable
-fun RecentlyWatchedScreen(
+internal fun RecentlyWatchedScreen(
     navigator: CommonScreenNavigator,
     previewFilm: (Film) -> Unit,
 ) {
@@ -45,7 +45,7 @@ fun RecentlyWatchedScreen(
                 topBar = {
                     CommonTopBar(
                         modifier = Modifier.align(Alignment.TopStart),
-                        headerTitle = stringResource(id = UtilR.string.recently_watched),
+                        headerTitle = stringResource(id = LocaleR.string.recently_watched),
                         onNavigationIconClick = navigator::goBack
                     )
                 }
@@ -57,7 +57,7 @@ fun RecentlyWatchedScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = stringResource(id = UtilR.string.empty_recently_watched_list_message),
+                        text = stringResource(id = LocaleR.string.empty_recently_watched_list_message),
                         textAlign = TextAlign.Center
                     )
                 }
@@ -71,7 +71,7 @@ fun RecentlyWatchedScreen(
         ) {
             FilmsGridScreen(
                 modifier = Modifier.fillMaxSize(),
-                screenTitle = stringResource(UtilR.string.recently_watched),
+                screenTitle = stringResource(LocaleR.string.recently_watched),
                 films = watchHistoryItems,
                 isShowingFilmCardTitle = appSettings.isShowingFilmCardTitle,
                 onFilmClick = navigator::openFilmScreen,

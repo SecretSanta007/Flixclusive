@@ -19,8 +19,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.flixclusive.core.ui.common.util.onMediumEmphasis
-import com.flixclusive.core.util.film.FilmType
-import com.flixclusive.core.util.R as UtilR
+import com.flixclusive.model.film.util.FilmType
+import com.flixclusive.core.locale.R as LocaleR
 
 @Composable
 fun FilmTypeFilters(
@@ -29,7 +29,7 @@ fun FilmTypeFilters(
 ) {
     Column {
         Text(
-            text = stringResource(UtilR.string.film_filter),
+            text = stringResource(LocaleR.string.film_filter),
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier
                 .fillMaxWidth()
@@ -76,3 +76,9 @@ fun FilmTypeFilters(
         }
     }
 }
+
+private val FilmType.stringId: Int
+    get() = when (this) {
+        FilmType.MOVIE -> LocaleR.string.movie
+        FilmType.TV_SHOW -> LocaleR.string.tv_show
+    }

@@ -42,6 +42,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.flixclusive.core.ui.common.dialog.IconAlertDialog
 import com.flixclusive.core.ui.common.navigation.GoBackAction
+import com.flixclusive.core.ui.common.navigation.navargs.RepositoryScreenNavArgs
 import com.flixclusive.core.ui.common.util.onMediumEmphasis
 import com.flixclusive.core.ui.mobile.component.RetryButton
 import com.flixclusive.core.ui.mobile.component.dialog.UnsafeInstallAlertDialog
@@ -54,23 +55,19 @@ import com.flixclusive.core.ui.mobile.util.isScrollingUp
 import com.flixclusive.core.ui.mobile.util.showMessage
 import com.flixclusive.feature.mobile.repository.component.RepositoryHeader
 import com.flixclusive.feature.mobile.repository.component.RepositoryTopBar
-import com.flixclusive.gradle.entities.ProviderData
-import com.flixclusive.gradle.entities.Repository
+import com.flixclusive.model.provider.ProviderData
 import com.ramcosta.composedestinations.annotation.Destination
 import kotlinx.coroutines.launch
+import com.flixclusive.core.locale.R as LocaleR
 import com.flixclusive.core.ui.common.R as UiCommonR
-import com.flixclusive.core.util.R as UtilR
 
-data class RepositoryScreenNavArgs(
-    val repository: Repository
-)
 
 @OptIn(ExperimentalFoundationApi::class)
 @Destination(
     navArgsDelegate = RepositoryScreenNavArgs::class
 )
 @Composable
-fun RepositoryScreen(
+internal fun RepositoryScreen(
     navigator: GoBackAction,
     args: RepositoryScreenNavArgs
 ) {
@@ -179,7 +176,7 @@ fun RepositoryScreen(
                             modifier = Modifier.fillMaxSize(),
                             shouldShowError = viewModel.uiState.error != null,
                             error = viewModel.uiState.error?.asString()
-                                ?: stringResource(UtilR.string.failed_to_load_online_providers),
+                                ?: stringResource(LocaleR.string.failed_to_load_online_providers),
                             onRetry = viewModel::initialize
                         )
                     }
@@ -206,7 +203,7 @@ fun RepositoryScreen(
                             },
                             iconId = UiCommonR.drawable.download,
                             isLoading = viewModel.installAllJob?.isActive == true,
-                            label = stringResource(id = UtilR.string.install_all),
+                            label = stringResource(id = LocaleR.string.install_all),
                             enabled = canInstallAll,
                             modifier = Modifier.fillMaxWidth()
                         )
@@ -234,7 +231,7 @@ fun RepositoryScreen(
                             },
                             modifier = Modifier
                                 .padding(vertical = 5.dp)
-                                .animateItemPlacement()
+                                .animateItem()
                         )
                     }
                 }
@@ -284,9 +281,9 @@ fun RepositoryScreen(
     if (providerToUninstall != null) {
         IconAlertDialog(
             painter = painterResource(id = UiCommonR.drawable.warning),
-            contentDescription = stringResource(id = UtilR.string.warning_content_description),
+            contentDescription = stringResource(id = LocaleR.string.warning_content_description),
             description = buildAnnotatedString {
-                append(context.getString(UtilR.string.warning_uninstall_message_first_half))
+                append(context.getString(LocaleR.string.warning_uninstall_message_first_half))
                 append(" ")
                 withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
                     append(providerToUninstall!!.name)

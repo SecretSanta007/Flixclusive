@@ -45,13 +45,13 @@ import com.flixclusive.core.ui.common.util.buildImageUrl
 import com.flixclusive.core.ui.common.util.formatTvRuntime
 import com.flixclusive.core.ui.common.util.onMediumEmphasis
 import com.flixclusive.core.ui.mobile.component.film.GenreButton
-import com.flixclusive.core.util.film.formatMinutes
-import com.flixclusive.core.util.film.formatRating
+import com.flixclusive.core.ui.common.util.formatMinutes
+import com.flixclusive.core.ui.common.util.formatRating
 import com.flixclusive.feature.mobile.film.R
-import com.flixclusive.model.tmdb.Film
-import com.flixclusive.model.tmdb.Genre
-import com.flixclusive.model.tmdb.TvShow
-import com.flixclusive.core.util.R as UtilR
+import com.flixclusive.model.film.Film
+import com.flixclusive.model.film.Genre
+import com.flixclusive.model.film.TvShow
+import com.flixclusive.core.locale.R as LocaleR
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -75,7 +75,7 @@ internal fun FilmScreenHeader(
             placeholder = painterResource(R.drawable.movie_placeholder),
             error = painterResource(R.drawable.movie_placeholder),
             contentDescription = stringResource(
-                id = UtilR.string.poster_content_description,
+                id = LocaleR.string.poster_content_description,
                 film.title
             ),
             contentScale = ContentScale.Crop,
@@ -106,7 +106,7 @@ internal fun FilmScreenHeader(
         ) {
             Icon(
                 painter = painterResource(R.drawable.left_arrow),
-                contentDescription = stringResource(UtilR.string.navigate_up),
+                contentDescription = stringResource(LocaleR.string.navigate_up),
             )
         }
 
@@ -144,7 +144,7 @@ internal fun FilmScreenHeader(
             ) {
                 Icon(
                     imageVector = Icons.Rounded.Star,
-                    contentDescription = stringResource(UtilR.string.rating_icon),
+                    contentDescription = stringResource(LocaleR.string.rating_icon),
                     modifier = Modifier.scale(0.6F),
                     tint = starColor
                 )

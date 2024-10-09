@@ -4,7 +4,6 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ContentTransform
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -37,16 +36,17 @@ import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.tv.foundation.PivotOffsets
 import androidx.tv.foundation.lazy.list.TvLazyColumn
 import coil.compose.AsyncImage
 import coil.imageLoader
-import com.flixclusive.core.ui.common.navigation.GoBackAction
+import com.flixclusive.core.locale.UiText
+import com.flixclusive.core.ui.common.navigation.navigator.FilmScreenTvNavigator
 import com.flixclusive.core.ui.common.util.buildImageUrl
 import com.flixclusive.core.ui.common.util.fadingEdge
 import com.flixclusive.core.ui.common.util.ifElse
@@ -62,8 +62,6 @@ import com.flixclusive.core.ui.tv.util.getLocalDrawerWidth
 import com.flixclusive.core.ui.tv.util.useLocalCurrentRoute
 import com.flixclusive.core.ui.tv.util.useLocalFocusTransferredOnLaunch
 import com.flixclusive.core.ui.tv.util.useLocalLastFocusedItemPerDestination
-import com.flixclusive.core.util.common.ui.UiText
-import com.flixclusive.core.util.film.FilmType
 import com.flixclusive.feature.tv.film.component.FilmErrorSnackbar
 import com.flixclusive.feature.tv.film.component.FilmsRow
 import com.flixclusive.feature.tv.film.component.buttons.EPISODES_BUTTON_KEY
@@ -71,25 +69,20 @@ import com.flixclusive.feature.tv.film.component.buttons.MainButtons
 import com.flixclusive.feature.tv.film.component.buttons.PLAY_BUTTON_KEY
 import com.flixclusive.feature.tv.film.component.episodes.EpisodesPanel
 import com.flixclusive.feature.tv.player.PlayerScreen
-import com.flixclusive.model.tmdb.Film
-import com.flixclusive.model.tmdb.Movie
-import com.flixclusive.model.tmdb.TvShow
-import com.flixclusive.model.tmdb.common.tv.Episode
+import com.flixclusive.model.film.Movie
+import com.flixclusive.model.film.TvShow
+import com.flixclusive.model.film.common.tv.Episode
+import com.flixclusive.model.film.util.FilmType
 import com.ramcosta.composedestinations.annotation.Destination
+import com.flixclusive.core.locale.R as LocaleR
 import com.flixclusive.core.ui.common.R as UiCommonR
-import com.flixclusive.core.util.R as UtilR
 
-interface FilmScreenTvNavigator : GoBackAction {
-    fun openFilmScreenSeamlessly(film: Film)
-}
-
-@OptIn(ExperimentalAnimationApi::class)
 @Destination(
     navArgsDelegate = FilmScreenNavArgs::class,
     style = FadeInAndOutScreenTransition::class
 )
 @Composable
-fun FilmScreen(
+internal fun FilmScreen(
     navigator: FilmScreenTvNavigator,
     args: FilmScreenNavArgs
 ) {
@@ -197,7 +190,7 @@ fun FilmScreen(
                         .height(400.dp),
                     model = it,
                     imageLoader = LocalContext.current.imageLoader,
-                    contentDescription = stringResource(id = UtilR.string.film_item_content_description)
+                    contentDescription = stringResource(id = LocaleR.string.film_item_content_description)
                 )
             }
         }
@@ -366,7 +359,7 @@ fun FilmScreen(
                                 FilmsRow(
                                     films = film!!.recommendations,
                                     hasFocus = otherFilmsHasFocus,
-                                    label = UiText.StringResource(UtilR.string.other_films_message),
+                                    label = UiText.StringResource(LocaleR.string.other_films_message),
                                     iconId = R.drawable.round_dashboard_24,
                                     currentFilm = film!!,
                                     goBack = navigator::goBack,
